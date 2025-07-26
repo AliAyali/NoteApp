@@ -43,6 +43,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.note.R
+import com.example.note.data.modelTest.Note
+import com.example.note.data.modelTest.Task
 
 @Preview
 @Composable
@@ -103,13 +105,30 @@ fun HomeScreen() {
 
         }
 
-        val allItems = listOf(listOf("test1", "text", "1401"), listOf("test2", "text", "1402"))
+        val allItemsNote = listOf(
+            Note("test1", "text", "1401"),
+            Note("test2", "text", "1402")
+        )
 
         var query by remember { mutableStateOf("") }
-        val filtersItems = remember(query) {
-            if (query.isBlank()) allItems
-            else allItems.filter { itemList ->
-                itemList.any { str -> str.contains(query, ignoreCase = true) }
+        val filtersItemsNote = remember(query) {
+            if (query.isBlank()) allItemsNote
+            else allItemsNote.filter {
+                it.title.contains(query, ignoreCase = true) ||
+                        it.detail.contains(query, ignoreCase = true) ||
+                        it.date.contains(query, ignoreCase = true)
+            }
+        }
+
+        val allItemsTask = listOf(
+            Task("test3", false),
+            Task("test4", true)
+        )
+
+        val filtersItemsTask = remember(query) {
+            if (query.isBlank()) allItemsTask
+            else allItemsTask.filter {
+                it.title.contains(query, ignoreCase = true)
             }
         }
 
@@ -152,14 +171,41 @@ fun HomeScreen() {
 
         when (selectedTabIndex) {
             0 -> {
-                Text("Tab 1")
+                if (filtersItemsTask.isNotEmpty())
+                    LazyColumn {
+                        items(filtersItemsTask) { it ->
+                            TaskItem(title = it.title, state = it.isChecked)
+                        }
+                    }
+                else
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_add_task),
+                            null,
+                            modifier = Modifier.size(80.dp),
+                            tint = MaterialTheme.colorScheme.secondary
+                        )
+
+                        Spacer(Modifier.height(20.dp))
+
+                        Text(
+                            text = "هیچ کاری موجود نیست",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 25.sp,
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    }
             }
 
             1 -> {
-                if (filtersItems.isNotEmpty())
+                if (filtersItemsNote.isNotEmpty())
                     LazyColumn {
-                        items(filtersItems) { it ->
-                            NoteItem(title = it[0], detail = it[1], date = it[2])
+                        items(filtersItemsNote) { it ->
+                            NoteItem(title = it.title, detail = it.detail, date = it.date)
                         }
                     }
                 else
