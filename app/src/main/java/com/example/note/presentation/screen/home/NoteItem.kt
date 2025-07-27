@@ -30,7 +30,7 @@ fun NoteItem(title: String, detail: String, date: String) {
                 MaterialTheme.colorScheme.surface,
                 RoundedCornerShape(10.dp)
             ),
-        elevation = CardDefaults.cardElevation(5.dp)
+        elevation = CardDefaults.cardElevation(2.dp)
     ) {
 
         Text(

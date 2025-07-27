@@ -1,5 +1,6 @@
 package com.example.note.presentation.screen.item
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,7 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
@@ -30,10 +31,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.note.core.utils.PersianDate
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
-fun ItemScreen() {
+fun ItemScreen(
+    viewModel: ItemViewModel = hiltViewModel(),
+) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -46,7 +49,7 @@ fun ItemScreen() {
                 .padding(horizontal = 20.dp, vertical = 20.dp)
         ) {
             Icon(
-                Icons.Default.ArrowBack,
+                Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = "Back",
                 modifier = Modifier.size(25.dp)
             )
@@ -54,7 +57,15 @@ fun ItemScreen() {
             Icon(
                 Icons.Default.Done,
                 contentDescription = "Done",
-                modifier = Modifier.size(25.dp)
+                modifier = Modifier
+                    .size(25.dp)
+                    .clickable {
+                        viewModel.insert(
+                            textFieldTitle,
+                            textFieldDetail,
+                            viewModel.today.value
+                        )
+                    }
             )
         }
 
@@ -105,7 +116,7 @@ fun ItemScreen() {
                 fontSize = 15.sp
             )
             Text(
-                PersianDate().getTodayPersianDate(),
+                viewModel.today.value,
                 color = MaterialTheme.colorScheme.secondary,
                 fontSize = 15.sp
             )

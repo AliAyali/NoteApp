@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
@@ -171,13 +172,27 @@ fun HomeScreen() {
 
         when (selectedTabIndex) {
             0 -> {
-                if (filtersItemsTask.isNotEmpty())
+                if (filtersItemsTask.isNotEmpty()) {
                     LazyColumn {
                         items(filtersItemsTask) { it ->
                             TaskItem(title = it.title, state = it.isChecked)
                         }
                     }
-                else
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(10.dp),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        Text(
+                            text = "کامل شده 1",
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                        Icon(
+                            Icons.Default.KeyboardArrowUp,
+                            null,
+                            tint = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+                } else
                     Column(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.Center,
