@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -43,13 +44,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.note.R
-import com.example.note.data.modelTest.Note
 import com.example.note.data.modelTest.Task
 
 @Preview
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    viewModel: HomeViewModel = hiltViewModel(),
+) {
     var selectedTabIndex by remember { mutableIntStateOf(1) }
 
     val tabs = listOf(
@@ -106,13 +109,11 @@ fun HomeScreen() {
 
         }
 
-        val allItemsNote = listOf(
-            Note("test1", "text", "1401"),
-            Note("test2", "text", "1402")
-        )
+        val allItemsNote by viewModel.notes.collectAsState()
 
         var query by remember { mutableStateOf("") }
-        val filtersItemsNote = remember(query) {
+
+        val filteredItemsNote = remember(query, allItemsNote) {
             if (query.isBlank()) allItemsNote
             else allItemsNote.filter {
                 it.title.contains(query, ignoreCase = true) ||
@@ -179,7 +180,9 @@ fun HomeScreen() {
                         }
                     }
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(10.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp),
                         horizontalArrangement = Arrangement.End
                     ) {
                         Text(
@@ -217,9 +220,9 @@ fun HomeScreen() {
             }
 
             1 -> {
-                if (filtersItemsNote.isNotEmpty())
+                if (filteredItemsNote.isNotEmpty())
                     LazyColumn {
-                        items(filtersItemsNote) { it ->
+                        items(filteredItemsNote) { it ->
                             NoteItem(title = it.title, detail = it.detail, date = it.date)
                         }
                     }

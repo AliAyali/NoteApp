@@ -28,7 +28,7 @@ fun SetupNavigation(
 
         composable(
             route = NavigationScreen.Item.route
-        ) { ItemScreen() }
+        ) { ItemScreen(navController) }
 
     }
 

@@ -32,9 +32,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import com.example.note.navigation.NavigationScreen
 
 @Composable
 fun ItemScreen(
+    navController: NavController,
     viewModel: ItemViewModel = hiltViewModel(),
 ) {
     Column(
@@ -65,6 +68,7 @@ fun ItemScreen(
                             textFieldDetail,
                             viewModel.today.value
                         )
+                        navController.navigate(NavigationScreen.Home.route)
                     }
             )
         }
@@ -91,7 +95,6 @@ fun ItemScreen(
                 disabledIndicatorColor = Color.Transparent,
                 focusedContainerColor = MaterialTheme.colorScheme.background,
                 unfocusedContainerColor = MaterialTheme.colorScheme.background,
-                unfocusedTextColor = MaterialTheme.colorScheme.background,
             ),
             textStyle = LocalTextStyle.current.copy(
                 textAlign = TextAlign.End,
@@ -146,7 +149,6 @@ fun ItemScreen(
                 disabledIndicatorColor = Color.Transparent,
                 focusedContainerColor = MaterialTheme.colorScheme.background,
                 unfocusedContainerColor = MaterialTheme.colorScheme.background,
-                unfocusedTextColor = MaterialTheme.colorScheme.background,
             ),
             textStyle = LocalTextStyle.current.copy(
                 textAlign = TextAlign.End,
