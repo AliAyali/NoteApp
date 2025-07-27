@@ -1,6 +1,5 @@
 package com.example.note.presentation.screen.home
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,20 +21,20 @@ fun NoteItem(
     detail: String,
     date: String,
     modifier: Modifier = Modifier,
+    isSelected: Boolean = false,
 ) {
-
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
+            containerColor = if (isSelected)
+                MaterialTheme.colorScheme.primary
+            else
+                MaterialTheme.colorScheme.surface
         ),
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 10.dp)
-            .background(
-                MaterialTheme.colorScheme.surface,
-                RoundedCornerShape(10.dp)
-            ),
-        elevation = CardDefaults.cardElevation(2.dp)
+            .padding(horizontal = 15.dp, vertical = 10.dp),
+        elevation = CardDefaults.cardElevation(2.dp),
+        shape = RoundedCornerShape(10.dp)
     ) {
 
         Text(
@@ -46,6 +45,7 @@ fun NoteItem(
             fontWeight = FontWeight.SemiBold,
             fontSize = 20.sp
         )
+
         Text(
             modifier = Modifier
                 .padding(end = 10.dp)

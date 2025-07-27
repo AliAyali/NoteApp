@@ -3,6 +3,7 @@ package com.example.note.data.repository
 import com.example.note.data.local.dataBase.dao.NoteDao
 import com.example.note.data.local.dataBase.entity.NoteEntity
 import com.example.note.domain.repository.NoteRepository
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class NoteRepositoryImpl @Inject constructor(
@@ -13,8 +14,8 @@ class NoteRepositoryImpl @Inject constructor(
         dao.insertNote(note)
     }
 
-    override suspend fun deleteNoteById(noteId: Int) {
-        dao.deleteNoteById(noteId)
+    override suspend fun deleteNoteByIds(noteId: List<Int>) {
+        dao.deleteNotesByIds(noteId)
     }
 
     override suspend fun updateNote(note: NoteEntity) {
@@ -23,6 +24,6 @@ class NoteRepositoryImpl @Inject constructor(
 
     override suspend fun getNoteById(id: Int): NoteEntity? = dao.getNoteById(id)
 
-    override suspend fun getAllNotes(): List<NoteEntity> = dao.getAllNotes()
+    override fun getAllNotes(): Flow<List<NoteEntity>> = dao.getAllNotes()
 
 }

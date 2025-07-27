@@ -2,6 +2,7 @@ package com.example.note.presentation.screen.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,10 +17,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
@@ -27,6 +32,8 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -38,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -49,6 +57,7 @@ import com.example.note.R
 import com.example.note.data.modelTest.Task
 import com.example.note.navigation.NavigationScreen
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     navController: NavController,
@@ -111,6 +120,46 @@ fun HomeScreen(
         }
 
         val allItemsNote by viewModel.notes.collectAsState()
+        val selectedNotes by viewModel.selectedNotes
+
+        TopAppBar(
+            title = {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (viewModel.isInSelectionMode()) {
+                        Row {
+                            IconButton(onClick = { viewModel.clearSelection() }) {
+                                Icon(Icons.Default.Close, contentDescription = "لغو انتخاب")
+                            }
+                            IconButton(onClick = { viewModel.deleteSelectedNotes() }) {
+                                Icon(Icons.Default.Delete, contentDescription = "حذف")
+                            }
+                        }
+                    } else {
+                        Spacer(modifier = Modifier.width(96.dp))
+                    }
+
+                    Text(
+                        modifier = Modifier.padding(end = 20.dp),
+                        text = if (viewModel.isInSelectionMode()) {
+                            "${selectedNotes.size} انتخاب شده"
+                        } else {
+                            "یادداشت‌ها"
+                        },
+                        textAlign = TextAlign.End,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.background
+            )
+        )
+
 
         var query by remember { mutableStateOf("") }
 
@@ -221,20 +270,40 @@ fun HomeScreen(
             }
 
             1 -> {
-                if (filteredItemsNote.isNotEmpty())
+                if (filteredItemsNote.isNotEmpty()) {
                     LazyColumn {
-                        items(filteredItemsNote) { it ->
+                        items(
+                            items = filteredItemsNote,
+                            key = { it.id }
+                        ) { noteEntity ->
                             NoteItem(
-                                title = it.title,
-                                detail = it.detail,
-                                date = it.date,
-                                modifier = Modifier.clickable {
-                                    navController.navigate(NavigationScreen.Item.createRoute(it.id))
-                                }
+                                title = noteEntity.title,
+                                detail = noteEntity.detail,
+                                date = noteEntity.date,
+                                isSelected = selectedNotes.contains(noteEntity.id),
+                                modifier = Modifier
+                                    .pointerInput(Unit) {
+                                        detectTapGestures(
+                                            onTap = {
+                                                if (viewModel.isInSelectionMode()) {
+                                                    viewModel.toggleSelection(noteEntity.id)
+                                                } else {
+                                                    navController.navigate(
+                                                        NavigationScreen.Item.createRoute(
+                                                            noteEntity.id
+                                                        )
+                                                    )
+                                                }
+                                            },
+                                            onLongPress = {
+                                                viewModel.toggleSelection(noteEntity.id)
+                                            }
+                                        )
+                                    }
                             )
                         }
                     }
-                else
+                } else
                     Column(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.Center,
