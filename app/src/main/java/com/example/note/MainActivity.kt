@@ -13,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.note.navigation.NavigationScreen
 import com.example.note.navigation.SetupNavigation
@@ -27,24 +28,24 @@ class MainActivity : ComponentActivity() {
         setContent {
             NoteTheme {
                 val navController = rememberNavController()
+                val currentBackStackEntry = navController.currentBackStackEntryAsState()
+                val currentDestination = currentBackStackEntry.value?.destination?.route
+
                 Scaffold(
 
                     floatingActionButton = {
-                        FloatingActionButton(
-                            modifier = Modifier.padding(10.dp),
-                            onClick = {
-                                val itemId = -1
-                                navController.navigate(NavigationScreen.Item.createRoute(itemId))
-                            },
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary
-                        ) {
-
-                            Icon(
-                                Icons.Default.Add,
-                                "Add"
-                            )
-
+                        if (currentDestination == NavigationScreen.Home.route) {
+                            FloatingActionButton(
+                                modifier = Modifier.padding(10.dp),
+                                onClick = {
+                                    val itemId = -1
+                                    navController.navigate(NavigationScreen.Item.createRoute(itemId))
+                                },
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = MaterialTheme.colorScheme.onPrimary
+                            ) {
+                                Icon(Icons.Default.Add, "Add")
+                            }
                         }
                     },
                     floatingActionButtonPosition = FabPosition.Start
