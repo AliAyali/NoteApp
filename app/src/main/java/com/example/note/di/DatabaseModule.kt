@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.example.note.data.local.dataBase.MyDataBase
 import com.example.note.data.local.dataBase.dao.NoteDao
+import com.example.note.data.local.dataBase.dao.TaskDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,12 +25,18 @@ object DatabaseModule {
             context,
             MyDataBase::class.java,
             MyDataBase.DATABASE_NAME
-        ).build()
+        )
+            .build()
     }
 
     @Provides
     fun provideNoteDao(database: MyDataBase): NoteDao {
         return database.noteDao()
+    }
+
+    @Provides
+    fun provideTaskDao(database: MyDataBase): TaskDao {
+        return database.taskDao()
     }
 
 }

@@ -13,10 +13,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.note.navigation.NavigationScreen
 import com.example.note.navigation.SetupNavigation
+import com.example.note.presentation.screen.home.TaskViewModel
 import com.example.note.ui.theme.NoteTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -30,6 +32,8 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val currentBackStackEntry = navController.currentBackStackEntryAsState()
                 val currentDestination = currentBackStackEntry.value?.destination?.route
+                val viewModel: TaskViewModel = hiltViewModel()
+
 
                 Scaffold(
 
@@ -38,8 +42,16 @@ class MainActivity : ComponentActivity() {
                             FloatingActionButton(
                                 modifier = Modifier.padding(10.dp),
                                 onClick = {
-                                    val itemId = -1
-                                    navController.navigate(NavigationScreen.Item.createRoute(itemId))
+                                    if (viewModel.selectedTabIndex.value == 0) {
+                                        viewModel.setShowDialog(true)
+                                    } else {
+                                        val itemId = -1
+                                        navController.navigate(
+                                            NavigationScreen.Item.createRoute(
+                                                itemId
+                                            )
+                                        )
+                                    }
                                 },
                                 containerColor = MaterialTheme.colorScheme.primary,
                                 contentColor = MaterialTheme.colorScheme.onPrimary
@@ -50,7 +62,7 @@ class MainActivity : ComponentActivity() {
                     },
                     floatingActionButtonPosition = FabPosition.Start
                 ) { padding ->
-                    SetupNavigation(padding, navController)
+                    SetupNavigation(padding, navController, viewModel)
                 }
             }
         }

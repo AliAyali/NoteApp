@@ -23,6 +23,6 @@ abstract class MyDataBase : RoomDatabase() {
         const val DATABASE_NAME = "note_db"
         const val NOTE_TABLE = "note_table"
         const val TASK_TABLE = "task_table"
-        const val DATABASE_VERSION = 1
+        const val DATABASE_VERSION = 2
     }
 }

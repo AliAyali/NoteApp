@@ -61,13 +61,47 @@ import com.example.note.navigation.NavigationScreen
 @Composable
 fun HomeScreen(
     navController: NavController,
-    viewModel: NoteViewModel = hiltViewModel(),
+    taskViewModel: TaskViewModel = hiltViewModel(),
+    noteViewModel: NoteViewModel = hiltViewModel(),
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(1) }
+
+    val allItemsNote by noteViewModel.notes.collectAsState()
+
+    val selectedNotes by noteViewModel.selectedNotes
+
+    var query by remember { mutableStateOf("") }
+
+    val filteredItemsNote = remember(query, allItemsNote) {
+        if (query.isBlank()) allItemsNote
+        else allItemsNote.filter {
+            it.title.contains(query, ignoreCase = true) ||
+                    it.detail.contains(query, ignoreCase = true) ||
+                    it.date.contains(query, ignoreCase = true)
+        }
+    }
+
+    val allItemsTask = listOf(
+        Task("test3", false),
+        Task("test4", true)
+    )
+
+    val filtersItemsTask = remember(query) {
+        if (query.isBlank()) allItemsTask
+        else allItemsTask.filter {
+            it.title.contains(query, ignoreCase = true)
+        }
+    }
 
     val tabs = listOf(
         painterResource(R.drawable.ic_task),
         painterResource(R.drawable.ic_note)
+    )
+
+    MyBottomSheetDialog(
+        taskViewModel.showDialog.value,
+        onDismiss = { taskViewModel.setShowDialog(false) },
+        onConfirm = { taskViewModel.setShowDialog(false) },
     )
 
     Column(
@@ -119,9 +153,6 @@ fun HomeScreen(
 
         }
 
-        val allItemsNote by viewModel.notes.collectAsState()
-        val selectedNotes by viewModel.selectedNotes
-
         TopAppBar(
             title = {
                 Row(
@@ -130,12 +161,12 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    if (viewModel.isInSelectionMode()) {
+                    if (noteViewModel.isInSelectionMode()) {
                         Row {
-                            IconButton(onClick = { viewModel.clearSelection() }) {
+                            IconButton(onClick = { noteViewModel.clearSelection() }) {
                                 Icon(Icons.Default.Close, contentDescription = "لغو انتخاب")
                             }
-                            IconButton(onClick = { viewModel.deleteSelectedNotes() }) {
+                            IconButton(onClick = { noteViewModel.deleteSelectedNotes() }) {
                                 Icon(Icons.Default.Delete, contentDescription = "حذف")
                             }
                         }
@@ -145,7 +176,7 @@ fun HomeScreen(
 
                     Text(
                         modifier = Modifier.padding(end = 20.dp),
-                        text = if (viewModel.isInSelectionMode()) {
+                        text = if (noteViewModel.isInSelectionMode()) {
                             "${selectedNotes.size} انتخاب شده"
                         } else {
                             "یادداشت‌ها"
@@ -159,30 +190,6 @@ fun HomeScreen(
                 containerColor = MaterialTheme.colorScheme.background
             )
         )
-
-
-        var query by remember { mutableStateOf("") }
-
-        val filteredItemsNote = remember(query, allItemsNote) {
-            if (query.isBlank()) allItemsNote
-            else allItemsNote.filter {
-                it.title.contains(query, ignoreCase = true) ||
-                        it.detail.contains(query, ignoreCase = true) ||
-                        it.date.contains(query, ignoreCase = true)
-            }
-        }
-
-        val allItemsTask = listOf(
-            Task("test3", false),
-            Task("test4", true)
-        )
-
-        val filtersItemsTask = remember(query) {
-            if (query.isBlank()) allItemsTask
-            else allItemsTask.filter {
-                it.title.contains(query, ignoreCase = true)
-            }
-        }
 
         TextField(
             value = query,
@@ -223,6 +230,7 @@ fun HomeScreen(
 
         when (selectedTabIndex) {
             0 -> {
+                taskViewModel.onTabSelected(0)
                 if (filtersItemsTask.isNotEmpty()) {
                     LazyColumn {
                         items(filtersItemsTask) { it ->
@@ -270,6 +278,7 @@ fun HomeScreen(
             }
 
             1 -> {
+                taskViewModel.onTabSelected(1)
                 if (filteredItemsNote.isNotEmpty()) {
                     LazyColumn {
                         items(
@@ -285,8 +294,8 @@ fun HomeScreen(
                                     .pointerInput(Unit) {
                                         detectTapGestures(
                                             onTap = {
-                                                if (viewModel.isInSelectionMode()) {
-                                                    viewModel.toggleSelection(noteEntity.id)
+                                                if (noteViewModel.isInSelectionMode()) {
+                                                    noteViewModel.toggleSelection(noteEntity.id)
                                                 } else {
                                                     navController.navigate(
                                                         NavigationScreen.Item.createRoute(
@@ -296,7 +305,7 @@ fun HomeScreen(
                                                 }
                                             },
                                             onLongPress = {
-                                                viewModel.toggleSelection(noteEntity.id)
+                                                noteViewModel.toggleSelection(noteEntity.id)
                                             }
                                         )
                                     }
@@ -329,3 +338,4 @@ fun HomeScreen(
         }
     }
 }
+

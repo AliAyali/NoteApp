@@ -10,12 +10,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.note.presentation.screen.home.HomeScreen
+import com.example.note.presentation.screen.home.TaskViewModel
 import com.example.note.presentation.screen.item.ItemScreen
 
 @Composable
 fun SetupNavigation(
     padding: PaddingValues,
     navController: NavHostController,
+    taskViewModel: TaskViewModel,
 ) {
 
     NavHost(
@@ -26,7 +28,12 @@ fun SetupNavigation(
 
         composable(
             route = NavigationScreen.Home.route
-        ) { HomeScreen(navController) }
+        ) {
+            HomeScreen(
+                navController,
+                taskViewModel = taskViewModel
+            )
+        }
 
         composable(
             route = NavigationScreen.Item.route,
@@ -35,7 +42,6 @@ fun SetupNavigation(
             val itemId = backStackEntry.arguments?.getInt("itemId") ?: -1
             ItemScreen(navController, itemId)
         }
-
 
 
     }
