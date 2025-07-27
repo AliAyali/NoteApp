@@ -10,7 +10,7 @@ activityCompose = "1.10.1"
 composeBom = "2025.06.01"
 coroutines = "1.10.2"
 dagger = "2.57"
-room_version = "2.5.1"
+room_version = "2.7.0-alpha11"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }

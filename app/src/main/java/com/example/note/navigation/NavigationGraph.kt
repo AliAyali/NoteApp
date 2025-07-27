@@ -8,6 +8,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.note.presentation.screen.home.HomeScreen
+import com.example.note.presentation.screen.item.ItemScreen
 
 @Composable
 fun SetupNavigation(
@@ -24,6 +25,10 @@ fun SetupNavigation(
         composable(
             route = NavigationScreen.Home.route
         ) { HomeScreen() }
+
+        composable(
+            route = NavigationScreen.Item.route
+        ) { ItemScreen() }
 
     }
 
