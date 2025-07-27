@@ -61,7 +61,7 @@ import com.example.note.navigation.NavigationScreen
 @Composable
 fun HomeScreen(
     navController: NavController,
-    viewModel: HomeViewModel = hiltViewModel(),
+    viewModel: NoteViewModel = hiltViewModel(),
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(1) }
 
