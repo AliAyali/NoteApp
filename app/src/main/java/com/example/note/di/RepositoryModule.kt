@@ -1,7 +1,9 @@
 package com.example.note.di
 
 import com.example.note.data.repository.NoteRepositoryImpl
+import com.example.note.data.repository.TaskRepositoryImpl
 import com.example.note.domain.repository.NoteRepository
+import com.example.note.domain.repository.TaskRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -16,4 +18,10 @@ abstract class RepositoryModule {
     abstract fun bindNoteRepository(
         impl: NoteRepositoryImpl,
     ): NoteRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindTaskRepository(
+        impl: TaskRepositoryImpl,
+    ): TaskRepository
 }

@@ -60,7 +60,13 @@ fun ItemScreen(
             Icon(
                 Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = "Back",
-                modifier = Modifier.size(25.dp)
+                modifier = Modifier
+                    .size(25.dp)
+                    .clickable {
+                        navController.navigate(NavigationScreen.Home.route) {
+                            popUpTo(NavigationScreen.Home.route) { inclusive = true }
+                        }
+                    }
             )
             Spacer(modifier = Modifier.weight(1f))
             Icon(
@@ -70,7 +76,9 @@ fun ItemScreen(
                     .size(25.dp)
                     .clickable {
                         if (itemId == -1) viewModel.insert() else viewModel.update()
-                        navController.navigate(NavigationScreen.Home.route)
+                        navController.navigate(NavigationScreen.Home.route) {
+                            popUpTo(NavigationScreen.Home.route) { inclusive = true }
+                        }
                     }
             )
         }
