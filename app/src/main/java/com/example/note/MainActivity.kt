@@ -33,7 +33,8 @@ class MainActivity : ComponentActivity() {
                         FloatingActionButton(
                             modifier = Modifier.padding(10.dp),
                             onClick = {
-                                navController.navigate(NavigationScreen.Item.route)
+                                val itemId = -1
+                                navController.navigate(NavigationScreen.Item.createRoute(itemId))
                             },
                             containerColor = MaterialTheme.colorScheme.primary,
                             contentColor = MaterialTheme.colorScheme.onPrimary

@@ -12,18 +12,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun NoteItem(title: String, detail: String, date: String) {
+fun NoteItem(
+    title: String,
+    detail: String,
+    date: String,
+    modifier: Modifier = Modifier,
+) {
 
     Card(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 15.dp, vertical = 10.dp)
             .background(
@@ -45,8 +50,11 @@ fun NoteItem(title: String, detail: String, date: String) {
             modifier = Modifier
                 .padding(end = 10.dp)
                 .align(Alignment.End),
-            text = detail
+            text = if (detail.length > 10) "..." + detail.take(10) else detail,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
+
         Text(
             date,
             modifier = Modifier

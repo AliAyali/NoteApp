@@ -20,10 +20,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,13 +36,21 @@ import com.example.note.navigation.NavigationScreen
 @Composable
 fun ItemScreen(
     navController: NavController,
+    itemId: Int,
     viewModel: ItemViewModel = hiltViewModel(),
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        var textFieldTitle by remember { mutableStateOf("") }
-        var textFieldDetail by remember { mutableStateOf("") }
+        LaunchedEffect(itemId) {
+            if (itemId != -1) {
+                viewModel.getNoteById(itemId)
+            }
+        }
+
+        val title by viewModel.title
+        val detail by viewModel.detail
+        val date by viewModel.date
 
         Row(
             modifier = Modifier
@@ -63,19 +69,15 @@ fun ItemScreen(
                 modifier = Modifier
                     .size(25.dp)
                     .clickable {
-                        viewModel.insert(
-                            textFieldTitle,
-                            textFieldDetail,
-                            viewModel.today.value
-                        )
+                        if (itemId == -1) viewModel.insert() else viewModel.update()
                         navController.navigate(NavigationScreen.Home.route)
                     }
             )
         }
 
         TextField(
-            value = textFieldTitle,
-            onValueChange = { textFieldTitle = it },
+            value = title,
+            onValueChange = { viewModel.onTitleChange(it) },
             placeholder = {
                 Text(
                     text = "عنوان",
@@ -109,7 +111,7 @@ fun ItemScreen(
             horizontalArrangement = Arrangement.SpaceAround
         ) {
             Text(
-                "نویسه ${textFieldDetail.length}",
+                "نویسه ${detail.length}",
                 color = MaterialTheme.colorScheme.secondary,
                 fontSize = 15.sp
             )
@@ -119,15 +121,15 @@ fun ItemScreen(
                 fontSize = 15.sp
             )
             Text(
-                viewModel.today.value,
+                date,
                 color = MaterialTheme.colorScheme.secondary,
                 fontSize = 15.sp
             )
         }
 
         TextField(
-            value = textFieldDetail,
-            onValueChange = { textFieldDetail = it },
+            value = detail,
+            onValueChange = { viewModel.onDetailChange(it) },
             placeholder = {
                 Text(
                     text = "تایپ کردن را آغاز کنید",

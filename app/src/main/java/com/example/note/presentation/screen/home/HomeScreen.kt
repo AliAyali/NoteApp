@@ -41,16 +41,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.note.R
 import com.example.note.data.modelTest.Task
+import com.example.note.navigation.NavigationScreen
 
-@Preview
 @Composable
 fun HomeScreen(
+    navController: NavController,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(1) }
@@ -223,7 +224,14 @@ fun HomeScreen(
                 if (filteredItemsNote.isNotEmpty())
                     LazyColumn {
                         items(filteredItemsNote) { it ->
-                            NoteItem(title = it.title, detail = it.detail, date = it.date)
+                            NoteItem(
+                                title = it.title,
+                                detail = it.detail,
+                                date = it.date,
+                                modifier = Modifier.clickable {
+                                    navController.navigate(NavigationScreen.Item.createRoute(it.id))
+                                }
+                            )
                         }
                     }
                 else

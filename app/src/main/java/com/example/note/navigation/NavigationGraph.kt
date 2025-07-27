@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.note.presentation.screen.home.HomeScreen
 import com.example.note.presentation.screen.item.ItemScreen
 
@@ -24,11 +26,17 @@ fun SetupNavigation(
 
         composable(
             route = NavigationScreen.Home.route
-        ) { HomeScreen() }
+        ) { HomeScreen(navController) }
 
         composable(
-            route = NavigationScreen.Item.route
-        ) { ItemScreen(navController) }
+            route = NavigationScreen.Item.route,
+            arguments = listOf(navArgument("itemId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val itemId = backStackEntry.arguments?.getInt("itemId") ?: -1
+            ItemScreen(navController, itemId)
+        }
+
+
 
     }
 
