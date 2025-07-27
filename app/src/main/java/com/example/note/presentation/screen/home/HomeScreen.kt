@@ -54,7 +54,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.note.R
-import com.example.note.data.modelTest.Task
 import com.example.note.navigation.NavigationScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -66,11 +65,11 @@ fun HomeScreen(
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(1) }
 
-    val allItemsNote by noteViewModel.notes.collectAsState()
-
     val selectedNotes by noteViewModel.selectedNotes
 
     var query by remember { mutableStateOf("") }
+
+    val allItemsNote by noteViewModel.notes.collectAsState()
 
     val filteredItemsNote = remember(query, allItemsNote) {
         if (query.isBlank()) allItemsNote
@@ -81,12 +80,9 @@ fun HomeScreen(
         }
     }
 
-    val allItemsTask = listOf(
-        Task("test3", false),
-        Task("test4", true)
-    )
+    val allItemsTask by taskViewModel.notes.collectAsState()
 
-    val filtersItemsTask = remember(query) {
+    val filtersItemsTask = remember(query, allItemsTask) {
         if (query.isBlank()) allItemsTask
         else allItemsTask.filter {
             it.title.contains(query, ignoreCase = true)
@@ -99,9 +95,9 @@ fun HomeScreen(
     )
 
     MyBottomSheetDialog(
-        taskViewModel.showDialog.value,
+        showDialog = taskViewModel.showDialog.value,
         onDismiss = { taskViewModel.setShowDialog(false) },
-        onConfirm = { taskViewModel.setShowDialog(false) },
+        itemId = -1
     )
 
     Column(
@@ -220,11 +216,15 @@ fun HomeScreen(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent,
-                focusedContainerColor = MaterialTheme.colorScheme.surface,
-                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                unfocusedTextColor = MaterialTheme.colorScheme.surface,
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                disabledContainerColor = Color.Transparent
             ),
-            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End)
+            textStyle = LocalTextStyle.current.copy(
+                textAlign = TextAlign.End,
+                color = if (query.isNotBlank()) MaterialTheme.colorScheme.primary
+                else MaterialTheme.colorScheme.secondary
+            )
         )
 
 
