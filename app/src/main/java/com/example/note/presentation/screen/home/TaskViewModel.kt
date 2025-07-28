@@ -1,5 +1,6 @@
 package com.example.note.presentation.screen.home
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -18,8 +19,11 @@ class TaskViewModel @Inject constructor(
     private val repository: TaskRepository,
 ) : ViewModel() {
 
-    private val _notes = MutableStateFlow<List<TaskEntity>>(emptyList())
-    val notes: StateFlow<List<TaskEntity>> = _notes
+    private val _notesFalse = MutableStateFlow<List<TaskEntity>>(emptyList())
+    val notesFalse: StateFlow<List<TaskEntity>> = _notesFalse
+
+    private val _notesTrue = MutableStateFlow<List<TaskEntity>>(emptyList())
+    val notesTrue: StateFlow<List<TaskEntity>> = _notesTrue
 
     private val _selectedTabIndex = mutableIntStateOf(0)
     val selectedTabIndex: State<Int> = _selectedTabIndex
@@ -34,12 +38,26 @@ class TaskViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            repository.getAllTasks().collect { taskList ->
-                _notes.value = taskList
+            launch {
+                repository.getTasksByChecked(false).collect { taskList ->
+                    _notesFalse.value = taskList
+                }
+            }
+            launch {
+                repository.getTasksByChecked(true).collect { taskList ->
+                    _notesTrue.value = taskList
+                }
             }
         }
     }
 
+
+    fun toggleCheck(task: TaskEntity) {
+        viewModelScope.launch {
+            Log.d("TOGGLE", "Clicked on: ${task.id}, current isChecked: ${task.isChecked}")
+            repository.updateIsChecked(task.id, !task.isChecked)
+        }
+    }
     fun onTabSelected(index: Int) {
         _selectedTabIndex.intValue = index
     }

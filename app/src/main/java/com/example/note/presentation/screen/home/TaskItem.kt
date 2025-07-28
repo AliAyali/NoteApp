@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun TaskItem(title: String, state: Boolean = false) {
+fun TaskItem(title: String, state: Boolean = false, action: () -> Unit) {
     Card(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
@@ -60,6 +60,7 @@ fun TaskItem(title: String, state: Boolean = false) {
                 checked = stateCheckBox,
                 onCheckedChange = {
                     stateCheckBox = it
+                    action()
                 },
                 colors = CheckboxDefaults.colors(
                     uncheckedColor = MaterialTheme.colorScheme.secondary

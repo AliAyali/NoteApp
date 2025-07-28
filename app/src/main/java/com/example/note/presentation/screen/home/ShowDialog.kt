@@ -44,7 +44,7 @@ fun MyBottomSheetDialog(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var title by remember { mutableStateOf("") }
-    val allItems by viewModel.notes.collectAsState()
+    val allItems by viewModel.notesFalse.collectAsState()
     if (itemId != -1)
         title = allItems[itemId].title
 

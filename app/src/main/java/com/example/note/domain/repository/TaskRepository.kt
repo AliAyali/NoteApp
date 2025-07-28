@@ -8,5 +8,6 @@ interface TaskRepository {
     suspend fun deleteTasksByIds(ids: List<Int>)
     suspend fun updateTask(task: TaskEntity)
     suspend fun getTaskById(id: Int): TaskEntity?
-    fun getAllTasks(): Flow<List<TaskEntity>>
+    fun getTasksByChecked(checked: Boolean): Flow<List<TaskEntity>>
+    suspend fun updateIsChecked(id: Int, isChecked: Boolean)
 }

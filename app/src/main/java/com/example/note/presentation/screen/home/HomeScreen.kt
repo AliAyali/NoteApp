@@ -1,5 +1,6 @@
 package com.example.note.presentation.screen.home
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -19,6 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
@@ -80,11 +82,19 @@ fun HomeScreen(
         }
     }
 
-    val allItemsTask by taskViewModel.notes.collectAsState()
+    val allItemsTaskTrue by taskViewModel.notesTrue.collectAsState()
+    val allItemsTaskFalse by taskViewModel.notesFalse.collectAsState()
 
-    val filtersItemsTask = remember(query, allItemsTask) {
-        if (query.isBlank()) allItemsTask
-        else allItemsTask.filter {
+    val filtersItemsTaskFalse = remember(query, allItemsTaskFalse) {
+        if (query.isBlank()) allItemsTaskFalse
+        else allItemsTaskFalse.filter {
+            it.title.contains(query, ignoreCase = true)
+        }
+    }
+
+    val filtersItemsTaskTrue = remember(query, allItemsTaskTrue) {
+        if (query.isBlank()) allItemsTaskTrue
+        else allItemsTaskTrue.filter {
             it.title.contains(query, ignoreCase = true)
         }
     }
@@ -93,6 +103,10 @@ fun HomeScreen(
         painterResource(R.drawable.ic_task),
         painterResource(R.drawable.ic_note)
     )
+
+    var visibility by remember {
+        mutableStateOf(true)
+    }
 
     MyBottomSheetDialog(
         showDialog = taskViewModel.showDialog.value,
@@ -231,29 +245,56 @@ fun HomeScreen(
         when (selectedTabIndex) {
             0 -> {
                 taskViewModel.onTabSelected(0)
-                if (filtersItemsTask.isNotEmpty()) {
-                    LazyColumn {
-                        items(filtersItemsTask) { it ->
-                            TaskItem(title = it.title, state = it.isChecked)
+
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    if (filtersItemsTaskFalse.isNotEmpty()) {
+                        items(filtersItemsTaskFalse) { item ->
+                            TaskItem(title = item.title, state = item.isChecked) {
+                                taskViewModel.toggleCheck(item)
+                            }
                         }
                     }
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(10.dp),
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        Text(
-                            text = "کامل شده 1",
-                            color = MaterialTheme.colorScheme.secondary
-                        )
-                        Icon(
-                            Icons.Default.KeyboardArrowUp,
-                            null,
-                            tint = MaterialTheme.colorScheme.secondary
-                        )
+
+                    if (filtersItemsTaskTrue.isNotEmpty()) {
+                        item {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(10.dp),
+                                horizontalArrangement = Arrangement.End
+                            ) {
+                                Text(
+                                    text = "کامل شده ${filtersItemsTaskTrue.size}",
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    modifier = Modifier.clickable {
+                                        visibility = !visibility
+                                    }
+                                )
+                                Icon(
+                                    if (visibility) Icons.Default.KeyboardArrowUp
+                                    else Icons.Default.KeyboardArrowDown,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.secondary
+                                )
+                            }
+                        }
+
+                        items(filtersItemsTaskTrue) { item ->
+                            AnimatedVisibility(
+                                visibility
+                            ) {
+                                TaskItem(title = item.title, state = item.isChecked) {
+                                    taskViewModel.toggleCheck(item)
+                                }
+                            }
+                        }
+
                     }
-                } else
+                }
+
+                if (filtersItemsTaskFalse.isEmpty() && filtersItemsTaskTrue.isEmpty()) {
                     Column(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.Center,
@@ -275,6 +316,7 @@ fun HomeScreen(
                             color = MaterialTheme.colorScheme.secondary
                         )
                     }
+                }
             }
 
             1 -> {

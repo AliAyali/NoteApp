@@ -25,6 +25,11 @@ class TaskRepositoryImpl @Inject constructor(
     override suspend fun getTaskById(id: Int): TaskEntity? =
         dao.getTaskById(id)
 
-    override fun getAllTasks(): Flow<List<TaskEntity>> =
-        dao.getAllTasks()
+    override fun getTasksByChecked(checked: Boolean): Flow<List<TaskEntity>> =
+        dao.getTasksByChecked(checked)
+
+    override suspend fun updateIsChecked(id: Int, isChecked: Boolean) {
+        dao.updateIsChecked(id, isChecked)
+    }
+
 }

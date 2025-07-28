@@ -20,8 +20,11 @@ interface TaskDao {
     @Update
     suspend fun updateTask(task: TaskEntity)
 
-    @Query("SELECT * FROM task_table ORDER BY id DESC")
-    fun getAllTasks(): Flow<List<TaskEntity>>
+    @Query("UPDATE task_table SET isChecked = :isChecked WHERE id = :id")
+    suspend fun updateIsChecked(id: Int, isChecked: Boolean)
+
+    @Query("SELECT * FROM task_table WHERE isChecked = :checked ORDER BY id DESC")
+    fun getTasksByChecked(checked: Boolean): Flow<List<TaskEntity>>
 
     @Query("SELECT * FROM task_table WHERE id = :taskId LIMIT 1")
     suspend fun getTaskById(taskId: Int): TaskEntity?
