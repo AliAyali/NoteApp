@@ -265,86 +265,6 @@ fun HomeScreen(
         when (selectedTabIndex) {
             0 -> {
                 taskViewModel.onTabSelected(0)
-
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    if (filtersItemsTaskFalse.isNotEmpty()) {
-                        items(
-                            items = filtersItemsTaskFalse,
-                            key = { it.id }
-                        ) { item ->
-                            TaskItem(
-                                title = item.title,
-                                state = item.isChecked,
-                                isSelected = taskViewModel.selectedTasks.value.contains(item.id),
-                                modifier = Modifier.pointerInput(Unit) {
-                                    detectTapGestures(
-                                        onLongPress = {
-                                            taskViewModel.toggleSelection(item.id)
-                                        }
-                                    )
-                                },
-                                onClick = {
-                                    taskViewModel.changeId(item.id)
-                                    taskViewModel.setShowDialog(true)
-                                }
-                            ) {
-                                taskViewModel.toggleCheck(item)
-                            }
-                        }
-                    }
-
-                    if (filtersItemsTaskTrue.isNotEmpty()) {
-                        item {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(10.dp),
-                                horizontalArrangement = Arrangement.End
-                            ) {
-                                Text(
-                                    text = "کامل شده ${filtersItemsTaskTrue.size}",
-                                    color = MaterialTheme.colorScheme.secondary,
-                                    modifier = Modifier.clickable {
-                                        visibility = !visibility
-                                    })
-                                Icon(
-                                    if (visibility) Icons.Default.KeyboardArrowUp
-                                    else Icons.Default.KeyboardArrowDown,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.secondary
-                                )
-                            }
-                        }
-
-                        items(
-                            items = filtersItemsTaskTrue,
-                            key = { it.id }
-                        ) { item ->
-                            AnimatedVisibility(
-                                visibility
-                            ) {
-                                TaskItem(
-                                    title = item.title,
-                                    state = item.isChecked,
-                                    isSelected = taskViewModel.selectedTasks.value.contains(item.id),
-                                    modifier = Modifier.pointerInput(Unit) {
-                                        detectTapGestures(
-                                            onLongPress = {
-                                                taskViewModel.toggleSelection(item.id)
-                                            })
-                                    },
-                                    onClick = {}
-                                ) {
-                                    taskViewModel.toggleCheck(item)
-                                }
-                            }
-                        }
-
-                    }
-                }
-
                 if (filtersItemsTaskFalse.isEmpty() && filtersItemsTaskTrue.isEmpty()) {
                     Column(
                         modifier = Modifier.fillMaxSize(),
@@ -366,6 +286,93 @@ fun HomeScreen(
                             fontSize = 25.sp,
                             color = MaterialTheme.colorScheme.secondary
                         )
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        if (filtersItemsTaskFalse.isNotEmpty()) {
+                            items(
+                                items = filtersItemsTaskFalse,
+                                key = { it.id }
+                            ) { item ->
+                                TaskItem(
+                                    title = item.title,
+                                    state = item.isChecked,
+                                    isSelected = taskViewModel.selectedTasks.value.contains(item.id),
+                                    modifier = Modifier.pointerInput(Unit) {
+                                        detectTapGestures(
+                                            onTap = {
+                                                if (taskViewModel.isInSelectionMode())
+                                                    taskViewModel.toggleSelection(item.id)
+                                                else {
+                                                    taskViewModel.changeId(item.id)
+                                                    taskViewModel.setShowDialog(true)
+                                                }
+                                            },
+                                            onLongPress = {
+                                                taskViewModel.toggleSelection(item.id)
+                                            }
+                                        )
+                                    }
+                                ) {
+                                    taskViewModel.toggleCheck(item)
+                                }
+                            }
+                        }
+
+                        if (filtersItemsTaskTrue.isNotEmpty()) {
+                            item {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(10.dp),
+                                    horizontalArrangement = Arrangement.End
+                                ) {
+                                    Text(
+                                        text = "کامل شده ${filtersItemsTaskTrue.size}",
+                                        color = MaterialTheme.colorScheme.secondary,
+                                        modifier = Modifier.clickable {
+                                            visibility = !visibility
+                                        })
+                                    Icon(
+                                        if (visibility) Icons.Default.KeyboardArrowUp
+                                        else Icons.Default.KeyboardArrowDown,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.secondary
+                                    )
+                                }
+                            }
+
+                            items(
+                                items = filtersItemsTaskTrue,
+                                key = { it.id }
+                            ) { item ->
+                                AnimatedVisibility(
+                                    visibility
+                                ) {
+                                    TaskItem(
+                                        title = item.title,
+                                        state = item.isChecked,
+                                        isSelected = taskViewModel.selectedTasks.value.contains(item.id),
+                                        modifier = Modifier.pointerInput(Unit) {
+                                            detectTapGestures(
+                                                onTap = {
+                                                    if (taskViewModel.isInSelectionMode())
+                                                        taskViewModel.toggleSelection(item.id)
+                                                },
+                                                onLongPress = {
+                                                    taskViewModel.toggleSelection(item.id)
+                                                }
+                                            )
+                                        }
+                                    ) {
+                                        taskViewModel.toggleCheck(item)
+                                    }
+                                }
+                            }
+
+                        }
                     }
                 }
             }

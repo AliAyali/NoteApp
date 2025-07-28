@@ -30,7 +30,6 @@ fun TaskItem(
     modifier: Modifier = Modifier,
     state: Boolean = false,
     isSelected: Boolean = false,
-    onClick: () -> Unit,
     action: () -> Unit,
 ) {
     Card(
@@ -54,10 +53,7 @@ fun TaskItem(
         Row(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(12.dp)
-                .clickable {
-                    onClick()
-                },
+                .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.End,
         ) {
