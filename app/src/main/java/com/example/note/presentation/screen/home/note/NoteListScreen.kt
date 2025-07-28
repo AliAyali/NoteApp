@@ -1,4 +1,4 @@
-package com.example.note.presentation.screen.home
+package com.example.note.presentation.screen.home.note
 
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,6 +10,8 @@ import androidx.navigation.NavController
 import com.example.note.R
 import com.example.note.data.local.dataBase.entity.NoteEntity
 import com.example.note.navigation.NavigationScreen
+import com.example.note.presentation.screen.home.EmptyScreen
+import com.example.note.presentation.screen.home.note.NoteViewModel
 
 @Composable
 fun NoteListScreen(

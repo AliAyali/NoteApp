@@ -15,6 +15,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.note.presentation.screen.home.note.NoteListScreen
+import com.example.note.presentation.screen.home.task.TaskListScreen
+import com.example.note.presentation.screen.home.note.NoteViewModel
+import com.example.note.presentation.screen.home.task.TaskViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

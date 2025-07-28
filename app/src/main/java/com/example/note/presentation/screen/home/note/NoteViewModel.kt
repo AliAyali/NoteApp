@@ -1,4 +1,4 @@
-package com.example.note.presentation.screen.home
+package com.example.note.presentation.screen.home.note
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf

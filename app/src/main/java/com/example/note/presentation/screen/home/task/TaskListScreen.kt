@@ -1,4 +1,4 @@
-package com.example.note.presentation.screen.home
+package com.example.note.presentation.screen.home.task
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
@@ -22,6 +22,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.example.note.R
 import com.example.note.data.local.dataBase.entity.TaskEntity
+import com.example.note.presentation.screen.home.EmptyScreen
+import com.example.note.presentation.screen.home.task.TaskViewModel
 
 @Composable
 fun TaskListScreen(

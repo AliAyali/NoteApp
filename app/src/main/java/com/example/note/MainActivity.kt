@@ -18,7 +18,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.note.navigation.NavigationScreen
 import com.example.note.navigation.SetupNavigation
-import com.example.note.presentation.screen.home.TaskViewModel
+import com.example.note.presentation.screen.home.task.TaskViewModel
 import com.example.note.ui.theme.NoteTheme
 import dagger.hilt.android.AndroidEntryPoint
 

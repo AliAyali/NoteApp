@@ -10,7 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.note.presentation.screen.home.HomeScreen
-import com.example.note.presentation.screen.home.TaskViewModel
+import com.example.note.presentation.screen.home.task.TaskViewModel
 import com.example.note.presentation.screen.item.ItemScreen
 
 @Composable
