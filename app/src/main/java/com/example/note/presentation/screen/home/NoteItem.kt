@@ -26,7 +26,7 @@ fun NoteItem(
     Card(
         colors = CardDefaults.cardColors(
             containerColor = if (isSelected)
-                MaterialTheme.colorScheme.primary
+                MaterialTheme.colorScheme.inverseSurface
             else
                 MaterialTheme.colorScheme.surface
         ),

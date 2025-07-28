@@ -76,9 +76,10 @@ fun HomeScreen(
     val filteredItemsNote = remember(query, allItemsNote) {
         if (query.isBlank()) allItemsNote
         else allItemsNote.filter {
-            it.title.contains(query, ignoreCase = true) ||
-                    it.detail.contains(query, ignoreCase = true) ||
-                    it.date.contains(query, ignoreCase = true)
+            it.title.contains(query, ignoreCase = true) || it.detail.contains(
+                query,
+                ignoreCase = true
+            ) || it.date.contains(query, ignoreCase = true)
         }
     }
 
@@ -100,8 +101,7 @@ fun HomeScreen(
     }
 
     val tabs = listOf(
-        painterResource(R.drawable.ic_task),
-        painterResource(R.drawable.ic_note)
+        painterResource(R.drawable.ic_task), painterResource(R.drawable.ic_note)
     )
 
     var visibility by remember {
@@ -130,16 +130,11 @@ fun HomeScreen(
                 contentDescription = "Setting",
                 modifier = Modifier
                     .padding(12.dp)
-                    .clickable {}
-            )
+                    .clickable {})
 
             Spacer(Modifier.width(50.dp))
 
-            TabRow(
-                selectedTabIndex = selectedTabIndex,
-                indicator = { },
-                divider = {}
-            ) {
+            TabRow(selectedTabIndex = selectedTabIndex, indicator = { }, divider = {}) {
                 tabs.forEachIndexed { index, icon ->
                     val isSelected = selectedTabIndex == index
                     Tab(
@@ -151,13 +146,10 @@ fun HomeScreen(
                                 modifier = Modifier.size(25.dp),
                                 painter = icon,
                                 contentDescription = null,
-                                tint = if (isSelected)
-                                    MaterialTheme.colorScheme.primary
-                                else
-                                    MaterialTheme.colorScheme.secondary
+                                tint = if (isSelected) MaterialTheme.colorScheme.primary
+                                else MaterialTheme.colorScheme.secondary
                             )
-                        }
-                    )
+                        })
                 }
             }
 
@@ -166,40 +158,69 @@ fun HomeScreen(
         TopAppBar(
             title = {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    if (noteViewModel.isInSelectionMode()) {
-                        Row {
-                            IconButton(onClick = { noteViewModel.clearSelection() }) {
-                                Icon(Icons.Default.Close, contentDescription = "لغو انتخاب")
+                    when (selectedTabIndex) {
+                        0 -> {
+                            if (taskViewModel.isInSelectionMode()) {
+                                Row {
+                                    IconButton(onClick = { taskViewModel.clearSelection() }) {
+                                        Icon(Icons.Default.Close, contentDescription = "لغو انتخاب")
+                                    }
+                                    IconButton(onClick = { taskViewModel.deleteSelectedTasks() }) {
+                                        Icon(Icons.Default.Delete, contentDescription = "حذف")
+                                    }
+                                }
+                            } else {
+                                Spacer(modifier = Modifier.width(96.dp))
                             }
-                            IconButton(onClick = { noteViewModel.deleteSelectedNotes() }) {
-                                Icon(Icons.Default.Delete, contentDescription = "حذف")
-                            }
-                        }
-                    } else {
-                        Spacer(modifier = Modifier.width(96.dp))
-                    }
 
-                    Text(
-                        modifier = Modifier.padding(end = 20.dp),
-                        text = if (noteViewModel.isInSelectionMode()) {
-                            "${selectedNotes.size} انتخاب شده"
-                        } else {
-                            "یادداشت‌ها"
-                        },
-                        textAlign = TextAlign.End,
-                        fontWeight = FontWeight.Medium
-                    )
+                            Text(
+                                modifier = Modifier.padding(end = 20.dp),
+                                text = if (taskViewModel.isInSelectionMode()) {
+                                    "${taskViewModel.selectedTasks.value.size} انتخاب شده"
+                                } else {
+                                    "کارها"
+                                },
+                                textAlign = TextAlign.End,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+
+                        1 -> {
+                            if (noteViewModel.isInSelectionMode()) {
+                                Row {
+                                    IconButton(onClick = { noteViewModel.clearSelection() }) {
+                                        Icon(Icons.Default.Close, contentDescription = "لغو انتخاب")
+                                    }
+                                    IconButton(onClick = { noteViewModel.deleteSelectedNotes() }) {
+                                        Icon(Icons.Default.Delete, contentDescription = "حذف")
+                                    }
+                                }
+                            } else {
+                                Spacer(modifier = Modifier.width(96.dp))
+                            }
+
+                            Text(
+                                modifier = Modifier.padding(end = 20.dp),
+                                text = if (noteViewModel.isInSelectionMode()) {
+                                    "${noteViewModel.selectedNotes.value.size} انتخاب شده"
+                                } else {
+                                    "یادداشت‌ها"
+                                },
+                                textAlign = TextAlign.End,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+                    }
                 }
-            },
-            colors = TopAppBarDefaults.topAppBarColors(
+            }, colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.background
             )
         )
+
 
         TextField(
             value = query,
@@ -218,8 +239,7 @@ fun HomeScreen(
                     contentDescription = "Clear",
                     modifier = Modifier.clickable {
                         query = ""
-                    }
-                )
+                    })
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -251,7 +271,21 @@ fun HomeScreen(
                 ) {
                     if (filtersItemsTaskFalse.isNotEmpty()) {
                         items(filtersItemsTaskFalse) { item ->
-                            TaskItem(title = item.title, state = item.isChecked) {
+                            TaskItem(
+                                title = item.title,
+                                state = item.isChecked,
+                                isSelected = taskViewModel.selectedTasks.value.contains(item.id),
+                                modifier = Modifier.pointerInput(Unit) {
+                                    detectTapGestures(onTap = {
+                                        if (taskViewModel.isInSelectionMode()) {
+                                            taskViewModel.toggleSelection(item.id)
+                                        } else {
+                                            taskViewModel.toggleCheck(item)
+                                        }
+                                    }, onLongPress = {
+                                        taskViewModel.toggleSelection(item.id)
+                                    })
+                                }) {
                                 taskViewModel.toggleCheck(item)
                             }
                         }
@@ -270,8 +304,7 @@ fun HomeScreen(
                                     color = MaterialTheme.colorScheme.secondary,
                                     modifier = Modifier.clickable {
                                         visibility = !visibility
-                                    }
-                                )
+                                    })
                                 Icon(
                                     if (visibility) Icons.Default.KeyboardArrowUp
                                     else Icons.Default.KeyboardArrowDown,
@@ -285,7 +318,22 @@ fun HomeScreen(
                             AnimatedVisibility(
                                 visibility
                             ) {
-                                TaskItem(title = item.title, state = item.isChecked) {
+                                TaskItem(
+                                    title = item.title,
+                                    state = item.isChecked,
+                                    isSelected = taskViewModel.selectedTasks.value.contains(item.id),
+                                    modifier = Modifier.pointerInput(Unit) {
+                                        detectTapGestures(onTap = {
+                                            if (taskViewModel.isInSelectionMode()) {
+                                                taskViewModel.toggleSelection(item.id)
+                                            } else {
+                                                taskViewModel.toggleCheck(item)
+                                            }
+                                        }, onLongPress = {
+                                            taskViewModel.toggleSelection(item.id)
+                                        })
+                                    }
+                                ) {
                                     taskViewModel.toggleCheck(item)
                                 }
                             }
@@ -324,58 +372,50 @@ fun HomeScreen(
                 if (filteredItemsNote.isNotEmpty()) {
                     LazyColumn {
                         items(
-                            items = filteredItemsNote,
-                            key = { it.id }
-                        ) { noteEntity ->
+                            items = filteredItemsNote, key = { it.id }) { noteEntity ->
                             NoteItem(
                                 title = noteEntity.title,
                                 detail = noteEntity.detail,
                                 date = noteEntity.date,
                                 isSelected = selectedNotes.contains(noteEntity.id),
-                                modifier = Modifier
-                                    .pointerInput(Unit) {
-                                        detectTapGestures(
-                                            onTap = {
-                                                if (noteViewModel.isInSelectionMode()) {
-                                                    noteViewModel.toggleSelection(noteEntity.id)
-                                                } else {
-                                                    navController.navigate(
-                                                        NavigationScreen.Item.createRoute(
-                                                            noteEntity.id
-                                                        )
-                                                    )
-                                                }
-                                            },
-                                            onLongPress = {
-                                                noteViewModel.toggleSelection(noteEntity.id)
-                                            }
-                                        )
-                                    }
-                            )
+                                modifier = Modifier.pointerInput(Unit) {
+                                    detectTapGestures(onTap = {
+                                        if (noteViewModel.isInSelectionMode()) {
+                                            noteViewModel.toggleSelection(noteEntity.id)
+                                        } else {
+                                            navController.navigate(
+                                                NavigationScreen.Item.createRoute(
+                                                    noteEntity.id
+                                                )
+                                            )
+                                        }
+                                    }, onLongPress = {
+                                        noteViewModel.toggleSelection(noteEntity.id)
+                                    })
+                                })
                         }
                     }
-                } else
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_add_notes),
-                            null,
-                            modifier = Modifier.size(80.dp),
-                            tint = MaterialTheme.colorScheme.secondary
-                        )
+                } else Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_add_notes),
+                        null,
+                        modifier = Modifier.size(80.dp),
+                        tint = MaterialTheme.colorScheme.secondary
+                    )
 
-                        Spacer(Modifier.height(20.dp))
+                    Spacer(Modifier.height(20.dp))
 
-                        Text(
-                            text = "هیچ یادداشتی موجود نیست",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 25.sp,
-                            color = MaterialTheme.colorScheme.secondary
-                        )
-                    }
+                    Text(
+                        text = "هیچ یادداشتی موجود نیست",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 25.sp,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                }
             }
         }
     }

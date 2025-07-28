@@ -3,7 +3,6 @@ package com.example.note.presentation.screen.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,10 +24,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun TaskItem(title: String, state: Boolean = false, action: () -> Unit) {
+fun TaskItem(
+    title: String,
+    modifier: Modifier = Modifier,
+    state: Boolean = false,
+    isSelected: Boolean = false,
+    action: () -> Unit,
+) {
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
+            containerColor = if (isSelected)
+                MaterialTheme.colorScheme.inverseSurface
+            else MaterialTheme.colorScheme.surface,
         ),
         modifier = Modifier
             .fillMaxWidth()
@@ -43,11 +50,11 @@ fun TaskItem(title: String, state: Boolean = false, action: () -> Unit) {
         var stateCheckBox by remember { mutableStateOf(state) }
 
         Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(10.dp),
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 modifier = Modifier

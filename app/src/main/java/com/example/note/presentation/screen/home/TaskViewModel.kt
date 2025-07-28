@@ -36,6 +36,8 @@ class TaskViewModel @Inject constructor(
     private val _isChecked = mutableStateOf(false)
     val isChecked: State<Boolean> = _isChecked
 
+    val selectedTasks = mutableStateOf(setOf<Int>())
+
     init {
         viewModelScope.launch {
             launch {
@@ -58,6 +60,7 @@ class TaskViewModel @Inject constructor(
             repository.updateIsChecked(task.id, !task.isChecked)
         }
     }
+
     fun onTabSelected(index: Int) {
         _selectedTabIndex.intValue = index
     }
@@ -88,6 +91,27 @@ class TaskViewModel @Inject constructor(
                     isChecked = isChecked.value
                 )
             )
+        }
+    }
+
+    fun toggleSelection(taskId: Int) {
+        selectedTasks.value = selectedTasks.value.toMutableSet().apply {
+            if (contains(taskId)) remove(taskId) else add(taskId)
+        }
+    }
+
+    fun isInSelectionMode(): Boolean = selectedTasks.value.isNotEmpty()
+
+    fun clearSelection() {
+        selectedTasks.value = emptySet()
+    }
+
+    fun deleteSelectedTasks() {
+        viewModelScope.launch {
+            selectedTasks.value.forEach { id ->
+                repository.deleteTasksByIds(listOf(id))
+            }
+            clearSelection()
         }
     }
 
