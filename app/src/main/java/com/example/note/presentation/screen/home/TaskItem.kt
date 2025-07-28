@@ -1,6 +1,7 @@
 package com.example.note.presentation.screen.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,6 +30,7 @@ fun TaskItem(
     modifier: Modifier = Modifier,
     state: Boolean = false,
     isSelected: Boolean = false,
+    onClick: () -> Unit,
     action: () -> Unit,
 ) {
     Card(
@@ -52,7 +54,10 @@ fun TaskItem(
         Row(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(12.dp),
+                .padding(12.dp)
+                .clickable {
+                    onClick()
+                },
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.End,
         ) {
@@ -66,7 +71,6 @@ fun TaskItem(
             Checkbox(
                 checked = stateCheckBox,
                 onCheckedChange = {
-                    stateCheckBox = it
                     action()
                 },
                 colors = CheckboxDefaults.colors(

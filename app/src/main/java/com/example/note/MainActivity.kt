@@ -43,6 +43,7 @@ class MainActivity : ComponentActivity() {
                                 modifier = Modifier.padding(10.dp),
                                 onClick = {
                                     if (viewModel.selectedTabIndex.value == 0) {
+                                        viewModel.changeId(-1)
                                         viewModel.setShowDialog(true)
                                     } else {
                                         val itemId = -1

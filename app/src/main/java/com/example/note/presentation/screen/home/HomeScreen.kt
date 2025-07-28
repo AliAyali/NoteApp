@@ -111,7 +111,7 @@ fun HomeScreen(
     MyBottomSheetDialog(
         showDialog = taskViewModel.showDialog.value,
         onDismiss = { taskViewModel.setShowDialog(false) },
-        itemId = -1
+        itemId = taskViewModel.id.value
     )
 
     Column(
@@ -270,22 +270,26 @@ fun HomeScreen(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     if (filtersItemsTaskFalse.isNotEmpty()) {
-                        items(filtersItemsTaskFalse) { item ->
+                        items(
+                            items = filtersItemsTaskFalse,
+                            key = { it.id }
+                        ) { item ->
                             TaskItem(
                                 title = item.title,
                                 state = item.isChecked,
                                 isSelected = taskViewModel.selectedTasks.value.contains(item.id),
                                 modifier = Modifier.pointerInput(Unit) {
-                                    detectTapGestures(onTap = {
-                                        if (taskViewModel.isInSelectionMode()) {
+                                    detectTapGestures(
+                                        onLongPress = {
                                             taskViewModel.toggleSelection(item.id)
-                                        } else {
-                                            taskViewModel.toggleCheck(item)
                                         }
-                                    }, onLongPress = {
-                                        taskViewModel.toggleSelection(item.id)
-                                    })
-                                }) {
+                                    )
+                                },
+                                onClick = {
+                                    taskViewModel.changeId(item.id)
+                                    taskViewModel.setShowDialog(true)
+                                }
+                            ) {
                                 taskViewModel.toggleCheck(item)
                             }
                         }
@@ -314,7 +318,10 @@ fun HomeScreen(
                             }
                         }
 
-                        items(filtersItemsTaskTrue) { item ->
+                        items(
+                            items = filtersItemsTaskTrue,
+                            key = { it.id }
+                        ) { item ->
                             AnimatedVisibility(
                                 visibility
                             ) {
@@ -323,16 +330,12 @@ fun HomeScreen(
                                     state = item.isChecked,
                                     isSelected = taskViewModel.selectedTasks.value.contains(item.id),
                                     modifier = Modifier.pointerInput(Unit) {
-                                        detectTapGestures(onTap = {
-                                            if (taskViewModel.isInSelectionMode()) {
+                                        detectTapGestures(
+                                            onLongPress = {
                                                 taskViewModel.toggleSelection(item.id)
-                                            } else {
-                                                taskViewModel.toggleCheck(item)
-                                            }
-                                        }, onLongPress = {
-                                            taskViewModel.toggleSelection(item.id)
-                                        })
-                                    }
+                                            })
+                                    },
+                                    onClick = {}
                                 ) {
                                     taskViewModel.toggleCheck(item)
                                 }

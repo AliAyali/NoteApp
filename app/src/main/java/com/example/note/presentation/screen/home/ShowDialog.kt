@@ -20,6 +20,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,19 +44,25 @@ fun MyBottomSheetDialog(
     viewModel: TaskViewModel = hiltViewModel(),
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var title by remember { mutableStateOf("") }
     val allItems by viewModel.notesFalse.collectAsState()
-    if (itemId != -1)
-        title = allItems[itemId].title
+
+    var title by remember { mutableStateOf("") }
+
+    LaunchedEffect(itemId, allItems) {
+        if (itemId != -1) {
+            val currentItem = allItems.find { it.id == itemId }
+            title = currentItem?.title ?: ""
+        } else {
+            title = ""
+        }
+    }
 
     if (showDialog) {
         ModalBottomSheet(
             onDismissRequest = onDismiss,
             sheetState = sheetState
         ) {
-
             Row {
-
                 TextField(
                     value = title,
                     onValueChange = { title = it },
@@ -85,16 +92,19 @@ fun MyBottomSheetDialog(
                         disabledIndicatorColor = Color.Transparent,
                         focusedContainerColor = Color.Transparent,
                         unfocusedContainerColor = Color.Transparent,
-                        unfocusedTextColor = MaterialTheme.colorScheme.surface,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                     ),
                     textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End)
                 )
-
             }
 
             Button(
                 onClick = {
-                    if (itemId == -1) viewModel.insert(title = title) else viewModel.update()
+                    if (itemId == -1) {
+                        viewModel.insert(title = title)
+                    } else {
+                        viewModel.update(itemId, title)
+                    }
                     title = ""
                     onDismiss()
                 },
@@ -115,7 +125,6 @@ fun MyBottomSheetDialog(
             }
 
             Spacer(Modifier.height(20.dp))
-
         }
     }
 }

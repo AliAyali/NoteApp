@@ -29,7 +29,7 @@ class TaskViewModel @Inject constructor(
     val selectedTabIndex: State<Int> = _selectedTabIndex
     private val _showDialog = mutableStateOf(false)
     val showDialog: State<Boolean> = _showDialog
-    private val _id = mutableIntStateOf(0)
+    private val _id = mutableIntStateOf(-1)
     val id: State<Int> = _id
     private val _title = mutableStateOf("")
     val title: State<String> = _title
@@ -81,13 +81,13 @@ class TaskViewModel @Inject constructor(
         }
     }
 
-    fun update() {
-        if (_title.value.isBlank()) return
+    fun update(id: Int, title: String) {
+        if (title.isBlank()) return
         viewModelScope.launch {
             repository.updateTask(
                 TaskEntity(
-                    id = id.value,
-                    title = _title.value,
+                    id = id,
+                    title = title,
                     isChecked = isChecked.value
                 )
             )
@@ -113,6 +113,10 @@ class TaskViewModel @Inject constructor(
             }
             clearSelection()
         }
+    }
+
+    fun changeId(id: Int) {
+        _id.intValue = id
     }
 
 }
