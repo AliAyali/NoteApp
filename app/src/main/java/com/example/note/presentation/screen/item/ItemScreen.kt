@@ -64,7 +64,10 @@ fun ItemScreen(
                     .size(25.dp)
                     .clickable {
                         navController.navigate(NavigationScreen.Home.route) {
-                            popUpTo(NavigationScreen.Home.route) { inclusive = true }
+                            popUpTo(NavigationScreen.Home.route) {
+                                inclusive = false
+                            }
+                            launchSingleTop = true
                         }
                     }
             )

@@ -9,7 +9,7 @@
         android:icon="@drawable/application_note"
         android:label="@string/app_name"
         android:roundIcon="@drawable/application_note"
-        android:supportsRtl="true"
+        android:supportsRtl="false"
         android:theme="@style/Theme.Note">
         <activity
             android:name=".MainActivity"

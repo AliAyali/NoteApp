@@ -17,10 +17,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.note.R
+import com.example.note.navigation.NavigationScreen
 
 @Composable
-fun TopBarWithTabs(selectedTabIndex: Int, onTabSelected: (Int) -> Unit) {
+fun TopBarWithTabs(
+    selectedTabIndex: Int,
+    onTabSelected: (Int) -> Unit,
+    navController: NavController,
+) {
     val tabs = listOf(
         painterResource(R.drawable.ic_task),
         painterResource(R.drawable.ic_note)
@@ -30,7 +36,11 @@ fun TopBarWithTabs(selectedTabIndex: Int, onTabSelected: (Int) -> Unit) {
         Icon(
             imageVector = Icons.Default.Settings,
             contentDescription = "Setting",
-            modifier = Modifier.padding(12.dp).clickable { /* TODO */ }
+            modifier = Modifier
+                .padding(12.dp)
+                .clickable {
+                    navController.navigate(NavigationScreen.Setting.route)
+                }
         )
         Spacer(Modifier.width(50.dp))
         TabRow(selectedTabIndex = selectedTabIndex, indicator = {}, divider = {}) {

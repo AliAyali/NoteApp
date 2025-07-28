@@ -12,6 +12,7 @@ import androidx.navigation.navArgument
 import com.example.note.presentation.screen.home.HomeScreen
 import com.example.note.presentation.screen.home.task.TaskViewModel
 import com.example.note.presentation.screen.item.ItemScreen
+import com.example.note.presentation.screen.setting.SettingScreen
 
 @Composable
 fun SetupNavigation(
@@ -43,6 +44,11 @@ fun SetupNavigation(
             ItemScreen(navController, itemId)
         }
 
+        composable(
+            route = NavigationScreen.Setting.route,
+        ) {
+            SettingScreen(navController)
+        }
 
     }
 
