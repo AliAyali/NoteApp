@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.note.R
 import com.example.note.navigation.NavigationScreen
@@ -32,8 +33,9 @@ import com.example.note.navigation.NavigationScreen
 @Composable
 fun SettingScreen(
     navController: NavController,
+    viewModel: SettingViewModel = hiltViewModel(),
 ) {
-    var themeState by remember { mutableStateOf(false) }
+    val themeState by viewModel.isDarkTheme
     var lockState by remember { mutableStateOf(false) }
     var backupState by remember { mutableStateOf(false) }
     val fontSizes = listOf("کوچک", "متوسط", "بزرگ")
@@ -92,7 +94,9 @@ fun SettingScreen(
                 "تم تاریک",
                 R.drawable.moon,
                 state = themeState,
-            ) { themeState = it }
+            ) {
+                viewModel.toggleTheme(it)
+            }
 
             LineBox()
 

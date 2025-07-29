@@ -11,6 +11,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -19,6 +20,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.note.navigation.NavigationScreen
 import com.example.note.navigation.SetupNavigation
 import com.example.note.presentation.screen.home.task.TaskViewModel
+import com.example.note.presentation.screen.setting.SettingViewModel
 import com.example.note.ui.theme.NoteTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -28,12 +30,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            NoteTheme {
+            val settingViewModel: SettingViewModel = hiltViewModel()
+            val isDarkTheme by settingViewModel.isDarkTheme
+            NoteTheme(darkTheme = isDarkTheme) {
                 val navController = rememberNavController()
                 val currentBackStackEntry = navController.currentBackStackEntryAsState()
                 val currentDestination = currentBackStackEntry.value?.destination?.route
-                val viewModel: TaskViewModel = hiltViewModel()
-
+                val taskViewModel: TaskViewModel = hiltViewModel()
 
                 Scaffold(
 
@@ -42,9 +45,9 @@ class MainActivity : ComponentActivity() {
                             FloatingActionButton(
                                 modifier = Modifier.padding(10.dp),
                                 onClick = {
-                                    if (viewModel.selectedTabIndex.value == 0) {
-                                        viewModel.changeId(-1)
-                                        viewModel.setShowDialog(true)
+                                    if (taskViewModel.selectedTabIndex.value == 0) {
+                                        taskViewModel.changeId(-1)
+                                        taskViewModel.setShowDialog(true)
                                     } else {
                                         val itemId = -1
                                         navController.navigate(
@@ -63,7 +66,7 @@ class MainActivity : ComponentActivity() {
                     },
                     floatingActionButtonPosition = FabPosition.Start
                 ) { padding ->
-                    SetupNavigation(padding, navController, viewModel)
+                    SetupNavigation(padding, navController, taskViewModel, settingViewModel)
                 }
             }
         }

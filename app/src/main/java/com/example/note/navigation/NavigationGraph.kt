@@ -13,12 +13,14 @@ import com.example.note.presentation.screen.home.HomeScreen
 import com.example.note.presentation.screen.home.task.TaskViewModel
 import com.example.note.presentation.screen.item.ItemScreen
 import com.example.note.presentation.screen.setting.SettingScreen
+import com.example.note.presentation.screen.setting.SettingViewModel
 
 @Composable
 fun SetupNavigation(
     padding: PaddingValues,
     navController: NavHostController,
     taskViewModel: TaskViewModel,
+    settingViewModel: SettingViewModel
 ) {
 
     NavHost(
@@ -47,7 +49,7 @@ fun SetupNavigation(
         composable(
             route = NavigationScreen.Setting.route,
         ) {
-            SettingScreen(navController)
+            SettingScreen(navController, settingViewModel)
         }
 
     }
