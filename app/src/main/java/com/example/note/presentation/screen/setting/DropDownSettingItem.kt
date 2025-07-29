@@ -22,11 +22,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.note.R
 
 @Composable
 fun DropDownSettingItem(
     name: String,
+    tint: Color,
     selectedSize: String,
     expanded: Boolean,
     list: List<String>,
@@ -83,7 +83,7 @@ fun DropDownSettingItem(
                 painter = painterResource(icon),
                 null,
                 modifier = Modifier.size(25.dp),
-                tint = MaterialTheme.colorScheme.secondary
+                tint = tint
             )
         }
 

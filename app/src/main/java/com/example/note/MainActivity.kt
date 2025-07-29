@@ -11,6 +11,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -34,9 +35,11 @@ class MainActivity : ComponentActivity() {
             val settingViewModel: SettingViewModel = hiltViewModel()
             val isDarkTheme by settingViewModel.isDarkTheme
             val fontSize = settingViewModel.selectedFontSize.value
+            val primaryColor by settingViewModel.primaryColor
             NoteTheme(
                 darkTheme = isDarkTheme,
-                typography = getTypography(fontSize)
+                typography = getTypography(fontSize),
+                primaryColor = primaryColor
             ) {
                 val navController = rememberNavController()
                 val currentBackStackEntry = navController.currentBackStackEntryAsState()

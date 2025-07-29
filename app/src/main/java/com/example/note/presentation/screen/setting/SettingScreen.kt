@@ -21,15 +21,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.core.app.NotificationCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.note.R
 import com.example.note.navigation.NavigationScreen
+
 
 @Composable
 fun SettingScreen(
@@ -40,13 +39,13 @@ fun SettingScreen(
     var lockState by remember { mutableStateOf(false) }
     var backupState by remember { mutableStateOf(false) }
     val fontSizes = FontSize.entries
-    val themeColor = listOf("زرد", "سبز", "صورتی")
+    val themeColor = listOf(Color(0xFFFFC107), Color(0xFF4CAF50), Color(0xFFE91E63))
     val sort = listOf("جدیدترین", "تاریخ", "نام")
     var expandedFontSize by remember { mutableStateOf(false) }
     var expandedThemeColor by remember { mutableStateOf(false) }
     var expandedSort by remember { mutableStateOf(false) }
     var selectedFontSize by viewModel.selectedFontSize
-    var selectedColor by remember { mutableStateOf(themeColor[1]) }
+    val selectedColor by viewModel.primaryColor
     var selectedSort by remember { mutableStateOf(sort[1]) }
 
     Column(
@@ -102,6 +101,7 @@ fun SettingScreen(
 
             DropDownSettingItem(
                 name = "سایز فونت",
+                MaterialTheme.colorScheme.secondary,
                 selectedSize = selectedFontSize.displayName,
                 expanded = expandedFontSize,
                 list = fontSizes.map { it.displayName },
@@ -117,21 +117,33 @@ fun SettingScreen(
 
             DropDownSettingItem(
                 "رنگ تم",
-                selectedColor,
+                MaterialTheme.colorScheme.primary,
+                when (selectedColor) {
+                    Color(0xFFFFC107) -> "زرد"
+                    Color(0xFF4CAF50) -> "سبز"
+                    Color(0xFFE91E63) -> "صورتی"
+                    else -> "سفارشی"
+                },
                 expandedThemeColor,
-                themeColor,
+                listOf("زرد", "سبز", "صورتی"),
                 R.drawable.color,
-                onClickSelectSize = {
-                    selectedColor = it
+                onClickSelectSize = { selectedName ->
+                    val index = listOf("زرد", "سبز", "صورتی").indexOf(selectedName)
+                    if (index >= 0) {
+                        val color = themeColor[index]
+                        viewModel.updatePrimaryColor(color)
+                    }
                 }
             ) {
                 expandedThemeColor = it
             }
 
+
             LineBox()
 
             DropDownSettingItem(
                 "مرتب سازی",
+                MaterialTheme.colorScheme.secondary,
                 selectedSort,
                 expandedSort,
                 sort,

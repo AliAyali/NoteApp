@@ -11,37 +11,39 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
-private val LightColorScheme = lightColorScheme(
-    primary = LightPrimaryYellow,
-    secondary = LightSecondaryGray,
-    tertiary = LightTertiaryYellow,
-    background = LightBackground,
-    surface = LightSurface
-)
-
-private val DarkColorScheme = darkColorScheme(
-    primary = DarkPrimaryYellow,
-    secondary = DarkSecondaryGray,
-    tertiary = DarkTertiaryYellow,
-    background = DarkBackground,
-    surface = DarkSurface
-)
-
 @Composable
 fun NoteTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = false,
+    primaryColor: androidx.compose.ui.graphics.Color,
     typography: Typography,
-    content: @Composable () -> Unit,
+    content: @Composable (() -> Unit),
 ) {
+
+    val lightColorScheme = lightColorScheme(
+        primary = primaryColor,
+        secondary = LightSecondaryGray,
+        tertiary = LightTertiaryYellow,
+        background = LightBackground,
+        surface = LightSurface
+    )
+
+    val darkColorScheme = darkColorScheme(
+        primary = primaryColor,
+        secondary = DarkSecondaryGray,
+        tertiary = DarkTertiaryYellow,
+        background = DarkBackground,
+        surface = DarkSurface
+    )
+
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+        darkTheme -> darkColorScheme
+        else -> lightColorScheme
     }
 
     MaterialTheme(
