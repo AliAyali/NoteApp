@@ -22,6 +22,7 @@ import com.example.note.navigation.SetupNavigation
 import com.example.note.presentation.screen.home.task.TaskViewModel
 import com.example.note.presentation.screen.setting.SettingViewModel
 import com.example.note.ui.theme.NoteTheme
+import com.example.note.ui.theme.getTypography
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -32,7 +33,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             val settingViewModel: SettingViewModel = hiltViewModel()
             val isDarkTheme by settingViewModel.isDarkTheme
-            NoteTheme(darkTheme = isDarkTheme) {
+            val fontSize = settingViewModel.selectedFontSize.value
+            NoteTheme(
+                darkTheme = isDarkTheme,
+                typography = getTypography(fontSize)
+            ) {
                 val navController = rememberNavController()
                 val currentBackStackEntry = navController.currentBackStackEntryAsState()
                 val currentDestination = currentBackStackEntry.value?.destination?.route

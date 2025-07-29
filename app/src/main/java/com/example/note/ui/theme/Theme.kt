@@ -3,6 +3,7 @@ package com.example.note.ui.theme
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
@@ -30,6 +31,7 @@ private val DarkColorScheme = darkColorScheme(
 fun NoteTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = false,
+    typography: Typography,
     content: @Composable () -> Unit,
 ) {
     val colorScheme = when {
@@ -44,7 +46,7 @@ fun NoteTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = typography,
         content = content
     )
 }

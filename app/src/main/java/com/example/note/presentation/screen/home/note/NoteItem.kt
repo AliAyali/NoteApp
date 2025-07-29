@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 @Composable
 fun NoteItem(
@@ -43,7 +42,7 @@ fun NoteItem(
                 .align(Alignment.End),
             text = title,
             fontWeight = FontWeight.SemiBold,
-            fontSize = 20.sp
+            fontSize = MaterialTheme.typography.titleLarge.fontSize
         )
 
         Text(
@@ -52,13 +51,15 @@ fun NoteItem(
                 .align(Alignment.End),
             text = if (detail.length > 10) "..." + detail.take(10) else detail,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
+            fontSize = MaterialTheme.typography.titleSmall.fontSize
         )
 
         Text(
             date,
             modifier = Modifier
-                .padding(start = 10.dp, bottom = 10.dp)
+                .padding(start = 10.dp, bottom = 10.dp),
+            fontSize = MaterialTheme.typography.titleSmall.fontSize
         )
 
     }

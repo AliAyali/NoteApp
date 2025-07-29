@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.NotificationCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.note.R
@@ -38,13 +39,13 @@ fun SettingScreen(
     val themeState by viewModel.isDarkTheme
     var lockState by remember { mutableStateOf(false) }
     var backupState by remember { mutableStateOf(false) }
-    val fontSizes = listOf("کوچک", "متوسط", "بزرگ")
+    val fontSizes = FontSize.entries
     val themeColor = listOf("زرد", "سبز", "صورتی")
     val sort = listOf("جدیدترین", "تاریخ", "نام")
     var expandedFontSize by remember { mutableStateOf(false) }
     var expandedThemeColor by remember { mutableStateOf(false) }
     var expandedSort by remember { mutableStateOf(false) }
-    var selectedSize by remember { mutableStateOf(fontSizes[1]) }
+    var selectedFontSize by viewModel.selectedFontSize
     var selectedColor by remember { mutableStateOf(themeColor[1]) }
     var selectedSort by remember { mutableStateOf(sort[1]) }
 
@@ -77,8 +78,7 @@ fun SettingScreen(
                 text = "تنظیمات",
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.End,
-                fontSize = 25.sp,
-                fontWeight = FontWeight.W500
+                fontSize = MaterialTheme.typography.titleLarge.fontSize * 1.2
             )
         }
 
@@ -101,17 +101,17 @@ fun SettingScreen(
             LineBox()
 
             DropDownSettingItem(
-                "سایز فونت",
-                selectedSize,
-                expandedFontSize,
-                fontSizes,
-                R.drawable.font_size,
-                onClickSelectSize = {
-                    selectedSize = it
-                }
-            ) {
-                expandedFontSize = it
-            }
+                name = "سایز فونت",
+                selectedSize = selectedFontSize.displayName,
+                expanded = expandedFontSize,
+                list = fontSizes.map { it.displayName },
+                icon = R.drawable.font_size,
+                onClickSelectSize = { selectedName ->
+                    val selectedEnum = fontSizes.firstOrNull { it.displayName == selectedName }
+                    selectedEnum?.let { viewModel.updateFontSize(it) }
+                },
+                onToggle = { expandedFontSize = it }
+            )
 
             LineBox()
 

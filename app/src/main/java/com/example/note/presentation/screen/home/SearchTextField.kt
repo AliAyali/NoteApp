@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,6 +37,7 @@ fun SearchTextField(
                 text = if (isNoteTab) "جست و جوی یادداشت ها" else "جست و جوی کارها",
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.End,
+                fontSize = 16.sp,
                 color = MaterialTheme.colorScheme.secondary
             )
         },

@@ -61,7 +61,7 @@ fun TaskItem(
                     .padding(end = 10.dp, top = 10.dp),
                 text = title,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 20.sp
+                fontSize = MaterialTheme.typography.titleLarge.fontSize
             )
             Checkbox(
                 checked = stateCheckBox,

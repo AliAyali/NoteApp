@@ -18,10 +18,19 @@ class SettingViewModel @Inject constructor(
     var isDarkTheme = mutableStateOf(false)
         private set
 
+    var selectedFontSize = mutableStateOf(FontSize.MEDIUM)
+        private set
+
     init {
         settingPreferences.darkModeFlow
             .onEach { isDark ->
                 isDarkTheme.value = isDark
+            }
+            .launchIn(viewModelScope)
+
+        settingPreferences.fontSizeFlow
+            .onEach { size ->
+                selectedFontSize.value = size
             }
             .launchIn(viewModelScope)
     }
@@ -30,6 +39,12 @@ class SettingViewModel @Inject constructor(
         isDarkTheme.value = value
         viewModelScope.launch {
             settingPreferences.saveDarkMode(value)
+        }
+    }
+
+    fun updateFontSize(size: FontSize) {
+        viewModelScope.launch {
+            settingPreferences.saveFontSize(size)
         }
     }
 
