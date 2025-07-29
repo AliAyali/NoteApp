@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.note.R
+import com.example.note.core.utils.nameToDisplay
 import com.example.note.navigation.NavigationScreen
 
 
@@ -40,13 +41,17 @@ fun SettingScreen(
     var backupState by remember { mutableStateOf(false) }
     val fontSizes = FontSize.entries
     val themeColor = listOf(Color(0xFFFFC107), Color(0xFF4CAF50), Color(0xFFE91E63))
-    val sort = listOf("جدیدترین", "تاریخ", "نام")
+    val sortOptions = listOf(
+        SortOrder.DATE_DESC to "جدیدترین",
+        SortOrder.DATE_ASC to "تاریخ",
+        SortOrder.TITLE to "نام"
+    )
     var expandedFontSize by remember { mutableStateOf(false) }
     var expandedThemeColor by remember { mutableStateOf(false) }
     var expandedSort by remember { mutableStateOf(false) }
     var selectedFontSize by viewModel.selectedFontSize
     val selectedColor by viewModel.primaryColor
-    var selectedSort by remember { mutableStateOf(sort[1]) }
+    var selectedSort by viewModel.selectedSortOrder
 
     Column(
         Modifier
@@ -144,12 +149,15 @@ fun SettingScreen(
             DropDownSettingItem(
                 "مرتب سازی",
                 MaterialTheme.colorScheme.secondary,
-                selectedSort,
+                selectedSort.nameToDisplay(),
                 expandedSort,
-                sort,
+                sortOptions.map { it.second },
                 R.drawable.folder,
-                onClickSelectSize = {
-                    selectedSort = it
+                onClickSelectSize = { selectedName ->
+                    val selectedOrder = sortOptions.firstOrNull { it.second == selectedName }?.first
+                    selectedOrder?.let {
+                        viewModel.updateSortOrder(it)
+                    }
                 }
             ) {
                 expandedSort = it

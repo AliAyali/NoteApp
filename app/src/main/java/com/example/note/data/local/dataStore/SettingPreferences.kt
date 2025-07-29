@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.example.note.presentation.screen.setting.FontSize
+import com.example.note.presentation.screen.setting.SortOrder
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -21,6 +22,7 @@ class SettingPreferences @Inject constructor(
         val FONT_SIZE_KEY = stringPreferencesKey("font_size")
         private val PRIMARY_COLOR_KEY = intPreferencesKey("primary_color")
         private val DEFAULT_COLOR = Color(0xFFFFC107)
+        private val SORT_ORDER_KEY = stringPreferencesKey("sort_order")
     }
 
     suspend fun saveDarkMode(enabled: Boolean) {
@@ -58,4 +60,16 @@ class SettingPreferences @Inject constructor(
             preferences[PRIMARY_COLOR_KEY] = color.toArgb()
         }
     }
+
+    suspend fun saveSortOrder(sortOrder: SortOrder) {
+        context.dataStore.edit { preferences ->
+            preferences[SORT_ORDER_KEY] = sortOrder.name
+        }
+    }
+
+    val sortOrderFlow: Flow<SortOrder> = context.dataStore.data
+        .map { preferences ->
+            val orderName = preferences[SORT_ORDER_KEY] ?: SortOrder.TITLE.name
+            SortOrder.valueOf(orderName)
+        }
 }

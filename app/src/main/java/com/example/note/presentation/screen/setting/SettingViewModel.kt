@@ -17,6 +17,9 @@ class SettingViewModel @Inject constructor(
     private val settingPreferences: SettingPreferences,
 ) : ViewModel() {
 
+    var selectedSortOrder = mutableStateOf(SortOrder.DATE_ASC)
+        private set
+
     var isDarkTheme = mutableStateOf(false)
         private set
 
@@ -43,6 +46,11 @@ class SettingViewModel @Inject constructor(
                 primaryColor.value = it
             }
         }
+        settingPreferences.sortOrderFlow
+            .onEach { sortOrder ->
+                selectedSortOrder.value = sortOrder
+            }
+            .launchIn(viewModelScope)
     }
 
     fun toggleTheme(value: Boolean) {
@@ -65,5 +73,11 @@ class SettingViewModel @Inject constructor(
         }
     }
 
+    fun updateSortOrder(sortOrder: SortOrder) {
+        viewModelScope.launch {
+            selectedSortOrder.value = sortOrder
+            settingPreferences.saveSortOrder(sortOrder)
+        }
+    }
 
 }

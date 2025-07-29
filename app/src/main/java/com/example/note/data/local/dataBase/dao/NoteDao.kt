@@ -26,4 +26,13 @@ interface NoteDao {
     @Query("SELECT * FROM note_table WHERE id = :noteId LIMIT 1")
     suspend fun getNoteById(noteId: Int): NoteEntity?
 
+    @Query("SELECT * FROM note_table ORDER BY title ASC")
+    fun getNotesOrderByTitle(): Flow<List<NoteEntity>>
+
+    @Query("SELECT * FROM note_table ORDER BY date ASC")
+    fun getNotesOrderByDateAsc(): Flow<List<NoteEntity>>
+
+    @Query("SELECT * FROM note_table ORDER BY date DESC")
+    fun getNotesOrderByDateDesc(): Flow<List<NoteEntity>>
+
 }

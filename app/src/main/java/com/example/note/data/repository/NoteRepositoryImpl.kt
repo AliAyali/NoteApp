@@ -26,4 +26,14 @@ class NoteRepositoryImpl @Inject constructor(
 
     override fun getAllNotes(): Flow<List<NoteEntity>> = dao.getAllNotes()
 
+    override fun getNotesOrderByTitle(): Flow<List<NoteEntity>> =
+        dao.getNotesOrderByTitle()
+
+
+    override fun getNotesOrderByDateAsc(): Flow<List<NoteEntity>> =
+        dao.getNotesOrderByDateAsc()
+
+
+    override fun getNotesOrderByDateDesc(): Flow<List<NoteEntity>> =
+        dao.getNotesOrderByDateDesc()
 }
