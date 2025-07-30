@@ -23,6 +23,8 @@ class SettingPreferences @Inject constructor(
         private val PRIMARY_COLOR_KEY = intPreferencesKey("primary_color")
         private val DEFAULT_COLOR = Color(0xFFFFC107)
         private val SORT_ORDER_KEY = stringPreferencesKey("sort_order")
+        private val STATE_PASSWORD_KEY = booleanPreferencesKey("state_password")
+        private val PASSWORD_KEY = stringPreferencesKey("password")
     }
 
     suspend fun saveDarkMode(enabled: Boolean) {
@@ -71,5 +73,29 @@ class SettingPreferences @Inject constructor(
         .map { preferences ->
             val orderName = preferences[SORT_ORDER_KEY] ?: SortOrder.TITLE.name
             SortOrder.valueOf(orderName)
+        }
+
+    suspend fun saveStatePassword(state: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[STATE_PASSWORD_KEY] = state
+        }
+    }
+
+    val passwordStateFlow: Flow<Boolean> = context.dataStore.data
+        .map { preferences ->
+            val statePassword = preferences[STATE_PASSWORD_KEY] ?: false
+            statePassword
+        }
+
+    suspend fun savePassword(password: String) {
+        context.dataStore.edit { preferences ->
+            preferences[PASSWORD_KEY] = password
+        }
+    }
+
+    val passwordFlow: Flow<String> = context.dataStore.data
+        .map { preferences ->
+            val password = preferences[PASSWORD_KEY] ?: ""
+            password
         }
 }

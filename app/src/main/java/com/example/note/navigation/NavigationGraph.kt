@@ -12,20 +12,22 @@ import androidx.navigation.navArgument
 import com.example.note.presentation.screen.home.HomeScreen
 import com.example.note.presentation.screen.home.task.TaskViewModel
 import com.example.note.presentation.screen.item.ItemScreen
+import com.example.note.presentation.screen.lock.LockScreen
 import com.example.note.presentation.screen.setting.SettingScreen
 import com.example.note.presentation.screen.setting.SettingViewModel
+import com.example.note.presentation.screen.splash.SplashScreen
 
 @Composable
 fun SetupNavigation(
     padding: PaddingValues,
     navController: NavHostController,
     taskViewModel: TaskViewModel,
-    settingViewModel: SettingViewModel
+    settingViewModel: SettingViewModel,
 ) {
 
     NavHost(
         navController = navController,
-        startDestination = NavigationScreen.Home.route,
+        startDestination = NavigationScreen.Splash.route,
         modifier = Modifier.padding(padding)
     ) {
 
@@ -50,6 +52,18 @@ fun SetupNavigation(
             route = NavigationScreen.Setting.route,
         ) {
             SettingScreen(navController, settingViewModel)
+        }
+
+        composable(
+            route = NavigationScreen.Splash.route,
+        ) {
+            SplashScreen(navController)
+        }
+
+        composable(
+            route = NavigationScreen.Lock.route,
+        ) {
+            LockScreen(navController)
         }
 
     }

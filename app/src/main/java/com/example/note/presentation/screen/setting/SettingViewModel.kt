@@ -27,6 +27,8 @@ class SettingViewModel @Inject constructor(
         private set
 
     val primaryColor = mutableStateOf(Color(0xFFFFC107))
+    val statePassword = mutableStateOf(false)
+    val password = mutableStateOf("")
 
     init {
         settingPreferences.darkModeFlow
@@ -49,6 +51,17 @@ class SettingViewModel @Inject constructor(
         settingPreferences.sortOrderFlow
             .onEach { sortOrder ->
                 selectedSortOrder.value = sortOrder
+            }
+            .launchIn(viewModelScope)
+        settingPreferences.passwordStateFlow
+            .onEach { state ->
+                statePassword.value = state
+            }
+            .launchIn(viewModelScope)
+
+        settingPreferences.passwordFlow
+            .onEach { pass ->
+                password.value = pass
             }
             .launchIn(viewModelScope)
     }
@@ -77,6 +90,19 @@ class SettingViewModel @Inject constructor(
         viewModelScope.launch {
             selectedSortOrder.value = sortOrder
             settingPreferences.saveSortOrder(sortOrder)
+        }
+    }
+
+    fun updateStatePassword(state: Boolean) {
+        viewModelScope.launch {
+            statePassword.value = state
+            settingPreferences.saveStatePassword(state)
+        }
+    }
+
+    fun updatePassword(password: String) {
+        viewModelScope.launch {
+            settingPreferences.savePassword(password)
         }
     }
 
