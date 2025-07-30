@@ -16,7 +16,7 @@ object SettingModule {
     @Singleton
     @Provides
     fun provideSettingPreferences(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
     ): SettingPreferences {
         return SettingPreferences(context)
     }

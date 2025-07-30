@@ -26,7 +26,6 @@ object DatabaseModule {
             MyDataBase::class.java,
             MyDataBase.DATABASE_NAME
         )
-            .fallbackToDestructiveMigration()
             .build()
     }
 

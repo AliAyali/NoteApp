@@ -21,6 +21,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
@@ -29,12 +31,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -48,8 +52,15 @@ import androidx.navigation.NavController
 import com.example.note.R
 import com.example.note.core.utils.nameToDisplay
 import com.example.note.navigation.NavigationScreen
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingScreen(
     navController: NavController,
@@ -71,6 +82,12 @@ fun SettingScreen(
     var selectedFontSize by viewModel.selectedFontSize
     val selectedColor by viewModel.primaryColor
     var selectedSort by viewModel.selectedSortOrder
+    val context = LocalContext.current
+    var warning by remember { mutableStateOf("میتوانید داده ها را به جای امن منتقل کنید") }
+    var backupDialog by remember { mutableStateOf(false) }
+    var restoreDialog by remember { mutableStateOf(false) }
+    val backupExists = remember { mutableStateOf(false) }
+    var progress by remember { mutableStateOf(false) }
 
     Column(
         Modifier
@@ -320,7 +337,6 @@ fun SettingScreen(
                             "ذخیره"
                         )
                     }
-
                 }
 
             }
@@ -331,8 +347,102 @@ fun SettingScreen(
                 "پشتیبان گیری",
                 R.drawable.backup,
                 state = backupState,
-            ) { backupState = it }
+            ) {
+                backupState = it
+                if (it) {
+                    backupDialog = true
+                }
+            }
+
+
+            Button(
+                onClick = {
+                    restoreDialog = true
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                ),
+                enabled = backupExists.value
+            ) {
+                Text(
+                    text = "بازیابی نوت‌ها",
+                    fontSize = 20.sp
+                )
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp)
+            ) {
+                if (progress) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+
+
+                Text(
+                    text = warning,
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    textAlign = TextAlign.End,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+            }
         }
+
         Spacer(Modifier.height(100.dp))
     }
+
+
+    if (backupDialog) {
+        AlertDialogBackup(
+            "پشتیبان",
+            "آیا از گرفتن پشتیبان اطمینان دارید؟",
+            {
+                backupDialog = it
+                backupState = false
+            }
+        ) {
+            CoroutineScope(Dispatchers.IO).launch {
+                progress = true
+                delay(3000)
+                progress = false
+                viewModel.backupToJsonFile(context)
+                warning = "پشتیبان با موفقیت گرفته شد"
+            }
+        }
+    }
+
+    if (restoreDialog) {
+        AlertDialogBackup(
+            "بازیابی پشتیبان",
+            "آیا از بازیابی اطلاعات اطمینان دارید؟",
+            { restoreDialog = it }) {
+            CoroutineScope(Dispatchers.IO).launch {
+                progress = true
+                delay(2000)
+                progress = false
+                viewModel.restoreFromJsonFile(context)
+                warning = "اطلاعات با موفقیت بازیابی شد"
+                delay(1000)
+                withContext(Dispatchers.Main) {
+                    navController.navigate(NavigationScreen.Home.route) {
+                        popUpTo(NavigationScreen.Setting.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        val file = File(context.filesDir, "note_backup.json")
+        backupExists.value = file.exists()
+    }
+
 }

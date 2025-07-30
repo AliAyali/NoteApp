@@ -1,20 +1,29 @@
 package com.example.note.presentation.screen.setting
 
+import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.note.data.local.dataBase.entity.NoteEntity
 import com.example.note.data.local.dataStore.SettingPreferences
+import com.example.note.domain.repository.NoteRepository
+import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 
 @HiltViewModel
 class SettingViewModel @Inject constructor(
     private val settingPreferences: SettingPreferences,
+    private val repository: NoteRepository,
 ) : ViewModel() {
 
     var selectedSortOrder = mutableStateOf(SortOrder.DATE_ASC)
@@ -105,5 +114,53 @@ class SettingViewModel @Inject constructor(
             settingPreferences.savePassword(password)
         }
     }
+
+    fun backupToJsonFile(context: Context) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val notesList = repository.getAllNotes().first()
+                val gson = Gson()
+                val jsonString = gson.toJson(notesList)
+
+                val fileName = "note_backup.json"
+                val file = File(context.filesDir, fileName)
+
+                file.writeText(jsonString)
+
+                Log.d("Backup", "پشتیبان‌گیری موفق}")
+            } catch (_: Exception) {
+                Log.e("Backup", "خطا در پشتیبان‌گیری")
+            }
+        }
+    }
+
+
+    fun restoreFromJsonFile(context: Context) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val fileName = "note_backup.json"
+                val file = File(context.filesDir, fileName)
+
+                if (!file.exists()) {
+                    Log.e("Restore", "فایل پشتیبان پیدا نشد")
+                    return@launch
+                }
+
+                val jsonString = file.readText()
+                val notesArray = Gson().fromJson(jsonString, Array<NoteEntity>::class.java)
+                val notesList = notesArray.toList()
+
+                for (note in notesList) {
+                    repository.insertNote(note)
+                }
+
+                Log.d("Restore", "true")
+            } catch (_: Exception) {
+                Log.e("Restore", "خطا در بازیابی")
+            }
+        }
+    }
+
+
 
 }

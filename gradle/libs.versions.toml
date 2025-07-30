@@ -38,6 +38,7 @@ datastore-preferences = { group = "androidx.datastore", name = "datastore-prefer
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room_version" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room_version" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room_version" }
+gson = { group = "com.google.code.gson", name = "gson", version = "2.10.1" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
