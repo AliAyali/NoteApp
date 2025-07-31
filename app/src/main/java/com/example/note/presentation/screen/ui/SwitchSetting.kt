@@ -1,4 +1,4 @@
-package com.example.note.presentation.screen.setting
+package com.example.note.presentation.screen.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +19,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.note.R
 
 @Composable
 fun SwitchSetting(

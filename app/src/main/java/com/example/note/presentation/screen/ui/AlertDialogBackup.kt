@@ -1,4 +1,4 @@
-package com.example.note.presentation.screen.setting
+package com.example.note.presentation.screen.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth

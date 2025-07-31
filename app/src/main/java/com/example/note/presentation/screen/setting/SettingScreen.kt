@@ -52,6 +52,10 @@ import androidx.navigation.NavController
 import com.example.note.R
 import com.example.note.core.utils.nameToDisplay
 import com.example.note.navigation.NavigationScreen
+import com.example.note.presentation.screen.ui.AlertDialogBackup
+import com.example.note.presentation.screen.ui.DropDownSettingItem
+import com.example.note.presentation.screen.ui.LineBox
+import com.example.note.presentation.screen.ui.SwitchSetting
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

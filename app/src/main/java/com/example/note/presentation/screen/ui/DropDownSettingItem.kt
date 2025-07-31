@@ -1,4 +1,4 @@
-package com.example.note.presentation.screen.setting
+package com.example.note.presentation.screen.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,15 +11,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -50,21 +51,24 @@ fun DropDownSettingItem(
             )
             DropdownMenu(expanded = expanded, onDismissRequest = { onToggle(false) }) {
                 list.forEach { size ->
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                size,
-                                fontWeight = FontWeight.W500,
-                                fontSize = 18.sp,
-                                modifier = Modifier.fillMaxWidth(),
-                                textAlign = TextAlign.End
-                            )
-                        },
-                        onClick = {
-                            onClickSelectSize(size)
-                            onToggle(false)
-                        }
-                    )
+                    CompositionLocalProvider(
+                        LocalLayoutDirection provides LayoutDirection.Rtl
+                    ) {
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    size,
+                                    fontWeight = FontWeight.W500,
+                                    fontSize = 18.sp,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            },
+                            onClick = {
+                                onClickSelectSize(size)
+                                onToggle(false)
+                            }
+                        )
+                    }
                 }
             }
         }

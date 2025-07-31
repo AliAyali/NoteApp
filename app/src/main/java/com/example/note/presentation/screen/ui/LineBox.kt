@@ -1,4 +1,4 @@
-package com.example.note.presentation.screen.setting
+package com.example.note.presentation.screen.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
